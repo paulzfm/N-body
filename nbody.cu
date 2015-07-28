@@ -162,10 +162,10 @@ void load_input(const char *sample)
 {
     FILE *fin = fopen(sample, "r");
     fscanf(fin, "%d", &N);
-    vx = malloc(sizeof(float) * N);
-    vy = malloc(sizeof(float) * N);
-    x = malloc(sizeof(float) * N);
-    y = malloc(sizeof(float) * N);
+    vx = (float*)malloc(sizeof(float) * N);
+    vy = (float*)malloc(sizeof(float) * N);
+    x = (float*)malloc(sizeof(float) * N);
+    y = (float*)malloc(sizeof(float) * N);
 
     int i;
     for (i = 0; i < N; i++) {
