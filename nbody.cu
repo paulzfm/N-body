@@ -204,7 +204,7 @@ int main(int argc, char **argv)
     }
 
     load_input(sample);
-    pthread_control();
+    pthread_control(iter);
 
     return 0;
 }
