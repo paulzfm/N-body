@@ -160,7 +160,7 @@ void cuda_control(int iter)
 
 void load_input(const char *sample)
 {
-    FILE *fin = file(sample, "r");
+    FILE *fin = fopen(sample, "r");
     fscanf(fin, "%d", &N);
     vx = malloc(sizeof(float) * N);
     vy = malloc(sizeof(float) * N);
