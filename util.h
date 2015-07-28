@@ -3,8 +3,8 @@
 
 int xmin, ymin, len_axis, len_window;
 
-void init_xwindow();
+extern void init_xwindow();
 
-void render(float *xs, float *ys, int n);
+extern void render(float *xs, float *ys, int n);
 
 #endif // NBODY_UTIL_H_
