@@ -1,13 +1,12 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
-
-/* window size */
-#define width 400
-#define height 400
+#include <stdlib.h>
+#include "util.h"
 
 Display *display;
 Window window;
 GC gc;
+int screen;
 
 void init_xwindow()
 {
@@ -18,18 +17,18 @@ void init_xwindow()
         exit(1);
 	}
 
-	int screen = DefaultScreen(display);
+	screen = DefaultScreen(display);
 
 	/* set window position */
-	int x = 0;
-	int y = 0;
+	int x = xmin;
+	int y = ymin;
 
 	/* border width in pixels */
 	int border_width = 0;
 
 	/* create window */
 	window = XCreateSimpleWindow(display, RootWindow(display, screen), x, y,
-        width, height, border_width,
+        len_window, len_window, border_width,
         BlackPixel(display, screen), WhitePixel(display, screen));
 
 	/* create graph */
