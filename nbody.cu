@@ -7,6 +7,7 @@
 #include "util.h"
 
 // global data
+const static int NTHREADS = 50; // number of threads
 int N;        // number of bodies
 float *vx;    // current velocity in x-axis
 float *vy;    // current velocity in y-axis
@@ -68,7 +69,7 @@ struct TaskParam
 
 void *task(void *args)
 {
-    TaskParam param = (TaskParam*)args;
+    TaskParam *param = (TaskParam*)args;
     int i;
     for (i = param->start; i < param->end; i++) {
         float f_x, f_y;
@@ -85,10 +86,10 @@ void *task(void *args)
 void pthread_control(int iter)
 {
     int i, j, k;
-    float *vx_new = malloc(sizeof(float) * N);
-    float *vy_new = malloc(sizeof(float) * N);
-    float *x_new = malloc(sizeof(float) * N);
-    float *y_new = malloc(sizeof(float) * N);
+    float *vx_new = (float*)malloc(sizeof(float) * N);
+    float *vy_new = (float*)malloc(sizeof(float) * N);
+    float *x_new = (float*)malloc(sizeof(float) * N);
+    float *y_new = (float*)malloc(sizeof(float) * N);
     pthread_t threads[NTHREADS];
     TaskParam param[NTHREADS];
     int width = ceil(N / NTHREADS); // width for each task package
