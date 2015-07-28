@@ -1,6 +1,8 @@
 #ifndef NBODY_UTIL_H_
 #define NBODY_UTIL_H_
 
+extern int width, height;
+
 void init_xwindow();
 
 void render(float *xs, float *ys, int n);
