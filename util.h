@@ -1,7 +1,7 @@
 #ifndef NBODY_UTIL_H_
 #define NBODY_UTIL_H_
 
-extern int xmin, ymin, len_axis, len_window;
+int xmin, ymin, len_axis, len_window;
 
 void init_xwindow();
 
