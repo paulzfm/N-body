@@ -230,7 +230,7 @@ void load_input(const char *sample)
 
     int i;
     for (i = 0; i < N; i++) {
-        fscanf(fin, "%f%f%f%f", x + i, y + i, vx + i, vy + i);
+        fscanf(fin, "%lf%lf%lf%lf", x + i, y + i, vx + i, vy + i);
     }
 
     fclose(fin);
