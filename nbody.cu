@@ -51,16 +51,9 @@ void init_xwindow()
 
 	screen = DefaultScreen(display);
 
-	/* set window position */
-	int x = 0;
-	int y = 0;
-
-	/* border width in pixels */
-	int border_width = 0;
-
 	/* create window */
-	window = XCreateSimpleWindow(display, RootWindow(display, screen), x, y,
-        len_window, len_window, border_width,
+	window = XCreateSimpleWindow(display, RootWindow(display, screen), 0, 0,
+        len_window, len_window, 0,
         BlackPixel(display, screen), WhitePixel(display, screen));
 
 	/* create graph */
@@ -80,11 +73,12 @@ void init_xwindow()
 // render window
 void render(double *xs, double *ys, int n)
 {
+	XClearArea(display, window, 0, 0, len_window, len_window, true);
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
 	printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[0], ys[0],
-		(xs[0] - xmin) / len_axis * len_window,
-		(ys[0] - ymin) / len_axis * len_window);
+		((float)xs[0] - xmin) / len_axis * len_window,
+		((float)ys[0] - ymin) / len_axis * len_window);
     for (i = 0; i < n; i++) {
         x = (xs[i] - xmin) / len_axis * len_window;
         y = (ys[i] - ymin) / len_axis * len_window;
@@ -246,7 +240,7 @@ void load_input(const char *sample)
     }
 
     fclose(fin);
-    printf("[loader] from \"%255s\": %d samples loaded.\n", sample, N);
+    printf("[loader] from \"%s\": %d samples loaded.\n", sample, N);
 }
 
 int main(int argc, char **argv)
