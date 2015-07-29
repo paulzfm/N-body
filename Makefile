@@ -5,7 +5,7 @@ nbody.o: nbody.cu util.h
 	nvcc -c nbody.cu -o nbody.o
 
 util.o: util.c util.h
-	gcc -c util.c -o util.o
+	nvcc -c util.c -o util.o
 
 clean:
-	rm -rf nbody *~
+	rm -rf nbody *~ *.o
