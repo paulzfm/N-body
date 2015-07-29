@@ -152,6 +152,8 @@ void *task(void *args)
 // pthread version main
 void pthread_control(int iter)
 {
+	render(x, y, N);
+
     int i, j, k;
     double *vx_new = (double*)malloc(sizeof(double) * N);
     double *vy_new = (double*)malloc(sizeof(double) * N);
