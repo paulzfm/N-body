@@ -8,11 +8,11 @@
 // global data
 int NTHREADS; // number of threads
 int N;        // number of bodies
-float *vx;    // current velocity in x-axis
-float *vy;    // current velocity in y-axis
-float *x;     // current x-position
-float *y;     // current y-position
-float m;      // mass for all bodies
+double *vx;    // current velocity in x-axis
+double *vy;    // current velocity in y-axis
+double *x;     // current x-position
+double *y;     // current y-position
+double m;      // mass for all bodies
 
 // options
 bool opt_xwindow; // enable xwindow?
@@ -20,7 +20,7 @@ bool opt_bha;     // use Barnes-Hut algorithm?
 
 // parameters
 float dt = 1.0; // time inteval
-float k = 1.0;  // gravitational constant
+double k = 1.0;  // gravitational constant
 
 // timer
 cudaEvent_t start, stop;
@@ -74,30 +74,30 @@ void init_xwindow()
 }
 
 // render window
-void render(float *xs, float *ys, int n)
+void render(double *xs, double *ys, int n)
 {
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
     for (i = 0; i < n; i++) {
         x = (xs[i] + 0.5 * len_axis) / len_axis * len_window;
         y = (ys[i] + 0.5 * len_axis) / len_axis * len_window;
-        printf("drawing (%f, %f) -> (%d, %d)\n", xs[i], ys[i], x, y);
+        printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
 }
 
 // force routine
-void force_routine(int i, float *f_x, float *f_y)
+void force_routine(int i, double *f_x, double *f_y)
 {
     int j;
     *f_x = 0;
     *f_y = 0;
     for (j = 0; j < N; j++) {
         if (i != j) {
-            float r2 = (x[j] - x[i]) * (x[j] - x[i]) +
+            double r2 = (x[j] - x[i]) * (x[j] - x[i]) +
                 (y[j] - y[i]) * (y[j] - y[i]);
-            float f = k * m * m / (r2 * sqrt(r2));
+            double f = k * m * m / (r2 * sqrt(r2));
             *f_x += f * (x[j] - x[i]);
             *f_y += f * (y[j] - y[i]);
         }
@@ -105,9 +105,9 @@ void force_routine(int i, float *f_x, float *f_y)
 }
 
 // cuda task routine: update status of i-th body
-void update(int i, float *vx_new, float *vy_new, float *x_new, float *y_new)
+void update(int i, double *vx_new, double *vy_new, double *x_new, double *y_new)
 {
-    float f_x, f_y;
+    double f_x, f_y;
     force_routine(i, &f_x, &f_y);
     vx_new[i] = vx[i] + f_x * dt / m;
     vy_new[i] = vy[i] + f_y * dt / m;
@@ -123,10 +123,10 @@ struct TaskParam
     int end;
 
     // buffers
-    float *vx_new;
-    float *vy_new;
-    float *x_new;
-    float *y_new;
+    double *vx_new;
+    double *vy_new;
+    double *x_new;
+    double *y_new;
 };
 
 void *task(void *args)
@@ -134,7 +134,7 @@ void *task(void *args)
     TaskParam *param = (TaskParam*)args;
     int i;
     for (i = param->start; i < param->end; i++) {
-        float f_x, f_y;
+        double f_x, f_y;
         force_routine(i, &f_x, &f_y);
         param->vx_new[i] = vx[i] + f_x * dt / m;
         param->vy_new[i] = vy[i] + f_y * dt / m;
@@ -149,10 +149,10 @@ void *task(void *args)
 void pthread_control(int iter)
 {
     int i, j, k;
-    float *vx_new = (float*)malloc(sizeof(float) * N);
-    float *vy_new = (float*)malloc(sizeof(float) * N);
-    float *x_new = (float*)malloc(sizeof(float) * N);
-    float *y_new = (float*)malloc(sizeof(float) * N);
+    double *vx_new = (double*)malloc(sizeof(double) * N);
+    double *vy_new = (double*)malloc(sizeof(double) * N);
+    double *x_new = (double*)malloc(sizeof(double) * N);
+    double *y_new = (double*)malloc(sizeof(double) * N);
     pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * NTHREADS);
     TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * NTHREADS);
     int width = ceil(N / NTHREADS); // width for each task package
@@ -213,20 +213,20 @@ void pthread_control(int iter)
 // cuda version main
 void cuda_control(int iter)
 {
-    // float *vx_last, *vy_last, *x_last, *y_last;
-    // float *vx_new, *vy_new, *x_new, *y_new;
+    // double *vx_last, *vy_last, *x_last, *y_last;
+    // double *vx_new, *vy_new, *x_new, *y_new;
     // cudaMalloc(vx_last, );
 }
 
-// load sample from file
+// load sample from
 void load_input(const char *sample)
 {
-    FILE *fin = fopen(sample, "r");
+     *fin = fopen(sample, "r");
     fscanf(fin, "%d", &N);
-    vx = (float*)malloc(sizeof(float) * N);
-    vy = (float*)malloc(sizeof(float) * N);
-    x = (float*)malloc(sizeof(float) * N);
-    y = (float*)malloc(sizeof(float) * N);
+    vx = (double*)malloc(sizeof(double) * N);
+    vy = (double*)malloc(sizeof(double) * N);
+    x = (double*)malloc(sizeof(double) * N);
+    y = (double*)malloc(sizeof(double) * N);
 
     int i;
     for (i = 0; i < N; i++) {
@@ -250,7 +250,7 @@ int main(int argc, char **argv)
         len_axis = atoi(argv[10]);
         len_window = atoi(argv[11]);
     } else {
-        fprintf(stderr, "Usage: %s num_of_threads m T t FILE θ enable/disable xmin ymin length Length\n", argv[0]);
+        fprintf(stderr, "Usage: %s num_of_threads m T t  θ enable/disable xmin ymin length Length\n", argv[0]);
         exit(1);
     }
 
