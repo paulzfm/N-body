@@ -4,8 +4,25 @@
 #include <stdlib.h>
 #include <math.h>
 
-extern "C" {
-    void update_body(int i, Body *bodies, Body *new_body);
+void update_body(int i, Body *bodies, Body *new_body)
+{
+	double a_x = 0;
+	double a_y = 0;
+	int j;
+    for (j = 0; j < global.N; j++) {
+        if (i != j) {
+            double r2 = (bodies[j].x - bodies[i].x) * (bodies[j].x - bodies[i].x)
+                + (bodies[j].y - bodies[i].y) * (bodies[j].y - bodies[i].y);
+            double a = global.k * global.m / (r2 * sqrt(r2));
+            a_x += a * (bodies[j].x - bodies[i].x);
+            a_y += a * (bodies[j].y - bodies[i].y);
+        }
+    }
+
+    new_body->vx = bodies[i].vx + a_x * global.dt;
+	new_body->vy = bodies[i].vy + a_y * global.dt;
+    new_body->x = bodies[i].x + new_body->vx * global.dt;
+    new_body->y = bodies[i].y + new_body->vy * global.dt;
 }
 
 // pthread worker
