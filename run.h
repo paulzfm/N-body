@@ -6,7 +6,7 @@
 typedef struct
 {
     int start, end; // [start, end)
-    Body *bodies, new_bodies;
+    Body *bodies, *new_bodies;
 } TaskParam;
 
 // pthread run
