@@ -96,20 +96,19 @@ void compute(int i, double *x, double *y, double *vx, double *vy,
 	double *x_new, double *y_new, double *vx_new, double *vy_new)
 {
     int j;
-	double f_x = 0;
-	double f_y = 0;
+	double a_x = a_y = 0;
     for (j = 0; j < N; j++) {
         if (i != j) {
             double r2 = (x[j] - x[i]) * (x[j] - x[i]) +
                 (y[j] - y[i]) * (y[j] - y[i]);
-            double f = k * m * m / (r2 * sqrt(r2));
-            f_x += f * (x[j] - x[i]);
-            f_y += f * (y[j] - y[i]);
+            double a = k * m / (r2 * sqrt(r2));
+            a_x += a * (x[j] - x[i]);
+            a_y += a * (y[j] - y[i]);
         }
     }
 
-	vx_new[i] = vx[i] + f_x * dt / m;
-    vy_new[i] = vy[i] + f_y * dt / m;
+	vx_new[i] = vx[i] + a_x * dt;
+    vy_new[i] = vy[i] + a_y * dt;
     x_new[i] = x[i] + vx_new[i] * dt;
     y_new[i] = y[i] + vy_new[i] * dt;
 }
