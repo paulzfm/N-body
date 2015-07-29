@@ -19,17 +19,17 @@ int main(int argc, char **argv)
     }
 
     int num_threads = atoi(argv[1]);
-    printf("[loader] num of threads: %d\n", NTHREADS);
+    printf("[loader] num of threads: %d\n", num_threads);
     global.m = atof(argv[2]);
-    printf("[loader] mass: %f\n", m);
+    printf("[loader] mass: %f\n", global.m);
     int iter = atoi(argv[3]);
     printf("[loader] total iter: %d\n", iter);
     global.dt = atof(argv[4]);
-    printf("[loader] time interval: %f\n", dt);
-    char sample[255];
-    strcpy(sample, argv[5]);
-    opt_bha = argv[6][0] == 'y';
-    opt_xwindow = argv[7][0] == 'e';
+    printf("[loader] time interval: %f\n", global.dt);
+    char file[255];
+    strcpy(file, argv[5]);
+    bool opt_bha = argv[6][0] == 'y';
+    bool opt_xwindow = argv[7][0] == 'e';
 
     if (opt_xwindow) {
         float xmin = atof(argv[8]);
@@ -49,6 +49,7 @@ int main(int argc, char **argv)
     }
 
     // load sample
+    Body *samples = malloc(sizeof(Body) * global.N);
     load_input(file, samples);
 
     // record time costs
@@ -59,14 +60,14 @@ int main(int argc, char **argv)
 
     // 1 run pthread version
     printf("running pthread version...\n");
-    Body *bodies = malloc(sizeof(Body) * N);
-    Body *buffer = malloc(sizeof(Body) * N);
-    memcpy(bodies, samples, sizeof(Body) * N);
+    Body *bodies = malloc(sizeof(Body) * global.N);
+    Body *buffer = malloc(sizeof(Body) * global.N);
+    memcpy(bodies, samples, sizeof(Body) * global.N);
 
     for (k = 0; k < iter; k++) {
         run_pthread_version(k, num_threads, bodies, buffer, pthread_time + k);
         printf("[pthread] iter: %d, time elapsed: %.4f ms\n", i, pthread_time[i]);
-        for (i = 0; i < N; i++) {
+        for (i = 0; i < global.N; i++) {
             bodies[i] = buffer[i];
         }
         if (opt_xwindow) {
