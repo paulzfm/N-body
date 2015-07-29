@@ -3,13 +3,13 @@
 
 #include <X11/Xlib.h>
 
-struct Body
+typedef struct
 {
     double x; // x-coordinate
     double y; // y-coordinate
     double vx; // x-velocity
     double vy; // y-velocity
-};
+} Body;
 
 // global parameters
 struct
