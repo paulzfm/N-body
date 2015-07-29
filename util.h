@@ -12,22 +12,10 @@ typedef struct
 } Body;
 
 // global parameters
-// namespace global {
-
-double m; // mass for each object
-double k; //
-double dt; // time interval
-int N;  // num of bodies
-
-// }
-
-// xwindow parameters
-Display *display;
-Window window;
-GC gc;
-int screen;
-float xmin, ymin, len_axis;
-int len_window;
+extern double m; // mass for each object
+extern double k; //
+extern double dt; // time interval
+extern int N;  // num of bodies
 
 Body* load_input(const char *file);
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window);
