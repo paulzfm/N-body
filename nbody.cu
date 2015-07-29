@@ -164,7 +164,7 @@ void pthread_control(int iter)
     double *y_new = (double*)malloc(sizeof(double) * N);
     pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * NTHREADS);
     TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * NTHREADS);
-    int width = ceil(N / NTHREADS); // width for each task package
+    int width = ceil((float)N / NTHREADS); // width for each task package
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
 
