@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
     for (k = 0; k < iter; k++) {
         run_pthread_version(k, num_threads, bodies, buffer, pthread_time + k);
-        printf("[pthread] iter: %d, time elapsed: %.4f ms\n", i, pthread_time[i]);
+        printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
         for (i = 0; i < N; i++) {
             bodies[i] = buffer[i];
         }
