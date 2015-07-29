@@ -79,10 +79,10 @@ void xwindow_show(Body *bodies)
     XClearArea(display, window, 0, 0, len_window, len_window, 0);
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
-	// printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[0], ys[0],
-		// (int)(((float)xs[0] - xmin) / len_axis * (float)len_window),
-		// (int)(((float)ys[0] - ymin) / len_axis * (float)len_window)
-	// );
+	printf("drawing (%lf, %lf) -> (%d, %d)\n", bodies[0].x, bodies[0].y
+		(int)(((float)bodies[0].x - xmin) / len_axis * (float)len_window),
+		(int)(((float)bodies[0].y - ymin) / len_axis * (float)len_window)
+	);
     for (i = 0; i < N; i++) {
         x = (int)(((float)bodies[i].x - xmin) / len_axis * (float)len_window);
         y = (int)(((float)bodies[i].y - ymin) / len_axis * (float)len_window);
