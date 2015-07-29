@@ -77,8 +77,8 @@ void render(double *xs, double *ys, int n)
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
 	printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[0], ys[0],
-		(int)((float)xs[0] - xmin) / len_axis * (float)len_window),
-		(int)((float)ys[0] - ymin) / len_axis * (float)len_window)
+		(int)(((float)xs[0] - xmin) / len_axis * (float)len_window),
+		(int)(((float)ys[0] - ymin) / len_axis * (float)len_window)
 	);
     for (i = 0; i < n; i++) {
         x = (xs[i] - xmin) / len_axis * len_window;
