@@ -148,6 +148,57 @@ void *task(void *args)
     pthread_exit(NULL);
 }
 
+// sequential
+void seq_control(int iter)
+{
+	if (opt_xwindow) {
+		printf("[seq] initial state\n");
+		render(x, y, N);
+		sleep(1);
+	}
+
+	int i, j, k;
+    double *vx_new = (double*)malloc(sizeof(double) * N);
+    double *vy_new = (double*)malloc(sizeof(double) * N);
+    double *x_new = (double*)malloc(sizeof(double) * N);
+    double *y_new = (double*)malloc(sizeof(double) * N);
+
+	cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+	for (i = 0; i < iter; i++) {
+        cudaEventRecord(start);
+
+	    for (j = 0; j < N; j++) {
+	        double f_x, f_y;
+	        force_routine(j, &f_x, &f_y);
+			vx_new[i] = vx[i] + f_x * dt / m;
+			vy_new[i] = vy[i] + f_y * dt / m;
+			x_new[i] = x[i] + vx_new[i] * dt;
+			y_new[i] = y[i] + vy_new[i] * dt;
+	    }
+
+        cudaEventRecord(stop);
+        cudaEventSynchronize(stop);
+        cudaEventElapsedTime(pthread_time + i, start, stop);
+
+        printf("[seq] iter: %d, time elapsed: %.4f ms\n", i, pthread_time[i]);
+
+        // commit changes to global data
+        for (k = 0; k < N; k++) {
+            vx[k] = vx_new[k];
+            vy[k] = vy_new[k];
+            x[k] = x_new[k];
+            y[k] = y_new[k];
+        }
+
+        // display
+        if (opt_xwindow) {
+            render(x, y, N);
+        }
+    }
+}
+
 // pthread version main
 void pthread_control(int iter)
 {
@@ -299,7 +350,8 @@ int main(int argc, char **argv)
     cuda_time = (float*)malloc(sizeof(float) * iter);
 
     // 1 run pthread version
-    pthread_control(iter);
+    // pthread_control(iter);
+	seq_control(iter);
 
     // 2 run cuda version
 
