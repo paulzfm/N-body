@@ -12,13 +12,14 @@ typedef struct
 } Body;
 
 // global parameters
-struct global_t
-{
-    double m; // mass for each object
-    double k; //
-    double dt; // time interval
-    int N;  // num of bodies
-} global;
+namespace global {
+
+double m; // mass for each object
+double k; //
+double dt; // time interval
+int N;  // num of bodies
+
+}
 
 // xwindow parameters
 Display *display;
