@@ -28,4 +28,8 @@ int screen;
 float xmin, ymin, len_axis;
 int len_window;
 
+void update_body(int i, Body *bodies, Body *new_body);
+void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window);
+void xwindow_show(Body *bodies);
+
 #endif // NBODY_UTIL_H_
