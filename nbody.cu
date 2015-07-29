@@ -146,6 +146,10 @@ void *task(void *args)
 void pthread_control(int iter)
 {
     int i, j, k;
+    float *vx_new = (float*)malloc(sizeof(float) * N);
+    float *vy_new = (float*)malloc(sizeof(float) * N);
+    float *x_new = (float*)malloc(sizeof(float) * N);
+    float *y_new = (float*)malloc(sizeof(float) * N);
     pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * NTHREADS);
     TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * NTHREADS);
     int width = ceil(N / NTHREADS); // width for each task package
@@ -264,10 +268,7 @@ int main(int argc, char **argv)
     load_input(sample);
 
     // allocate memory
-    vx_new = (float*)malloc(sizeof(float) * N);
-    vy_new = (float*)malloc(sizeof(float) * N);
-    x_new = (float*)malloc(sizeof(float) * N);
-    y_new = (float*)malloc(sizeof(float) * N);
+
     pthread_time = (float*)malloc(sizeof(float) * iter);
     cuda_time = (float*)malloc(sizeof(float) * iter);
 
