@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern double m;
+extern double k;
+extern double dt;
+extern int N;
+
 int main(int argc, char **argv)
 {
     if (argc == 8) {
