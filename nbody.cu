@@ -96,7 +96,8 @@ void compute(int i, double *x, double *y, double *vx, double *vy,
 	double *x_new, double *y_new, double *vx_new, double *vy_new)
 {
     int j;
-	double a_x = a_y = 0;
+	double a_x = 0;
+	double a_y = 0;
     for (j = 0; j < N; j++) {
         if (i != j) {
             double r2 = (x[j] - x[i]) * (x[j] - x[i]) +
