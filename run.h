@@ -3,7 +3,7 @@
 
 #include "util.h"
 
-typedef struct TaskParam_t
+typedef struct
 {
     int start, end; // [start, end)
     Body *bodies, *new_bodies;

@@ -12,7 +12,7 @@ typedef struct
 } Body;
 
 // global parameters
-struct
+struct global_t
 {
     double m; // mass for each object
     double k; //
