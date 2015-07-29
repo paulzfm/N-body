@@ -152,7 +152,9 @@ void *task(void *args)
 // pthread version main
 void pthread_control(int iter)
 {
+	printf("[pthread] initial state\n");
 	render(x, y, N);
+	sleep(1);
 
     int i, j, k;
     double *vx_new = (double*)malloc(sizeof(double) * N);
