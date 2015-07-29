@@ -164,7 +164,7 @@ void seq_control(int iter)
         cudaEventRecord(start);
 
 	    for (j = 0; j < N; j++) {
-	        compute(x, y, vx, vy, x_new, y_new, vx_new, vy_new);
+	        compute(j, x, y, vx, vy, x_new, y_new, vx_new, vy_new);
 			printf("%d: (%.4lf, %.4lf) -> (%.4lf, %.4lf)\n", j, x[j], y[j], x_new[j], y_new[j]);
 	    }
 
