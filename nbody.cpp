@@ -4,9 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern double m;
-extern double k;
-extern double dt;
+double m;
+double dt;
 extern int N;
 
 int main(int argc, char **argv)

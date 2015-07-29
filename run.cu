@@ -5,9 +5,10 @@
 #include <math.h>
 
 extern double m;
-extern double k;
 extern double dt;
 extern int N;
+
+const double k = 1.0;
 
 void update_body(int i, Body *bodies, Body *new_body)
 {

@@ -11,12 +11,6 @@ typedef struct
     double vy; // y-velocity
 } Body;
 
-// global parameters
-extern double m; // mass for each object
-extern double k; //
-extern double dt; // time interval
-extern int N;  // num of bodies
-
 Body* load_input(const char *file);
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window);
 void xwindow_show(Body *bodies);

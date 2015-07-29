@@ -12,6 +12,11 @@ int screen;
 float xmin, ymin, len_axis;
 int len_window;
 
+//
+extern double m;
+extern double dt;
+int N;
+
 Body* load_input(const char *file)
 {
 	FILE *fin = fopen(file, "r");
