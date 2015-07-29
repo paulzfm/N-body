@@ -215,6 +215,7 @@ void cuda_control(int iter)
     // cudaMalloc(vx_last, );
 }
 
+// load sample from file
 void load_input(const char *sample)
 {
     FILE *fin = fopen(sample, "r");
@@ -233,7 +234,7 @@ void load_input(const char *sample)
 int main(int argc, char **argv)
 {
     if (argc == 8) {
-        if (strcpy(argv[7], "enable") != 0) {
+        if (strcmp(argv[7], "enable") != 0) {
             fprintf(stderr, "Option error: expected xwindow size.\n");
             exit(1);
         }
