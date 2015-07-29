@@ -17,7 +17,7 @@ Body* load_input(const char *file)
 
 	int i;
 	for (i = 0; i < global.N; i++) {
-		fscanf("%lf%lf%lf%lf", &(samples[i].x), &(samples[i].y),
+		fscanf(fin, "%lf%lf%lf%lf", &(samples[i].x), &(samples[i].y),
 			&(samples[i].vx), &(samples[i].vy));
 	}
 
