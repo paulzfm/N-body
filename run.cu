@@ -9,20 +9,20 @@ void update_body(int i, Body *bodies, Body *new_body)
 	double a_x = 0;
 	double a_y = 0;
 	int j;
-    for (j = 0; j < global.N; j++) {
+    for (j = 0; j < global::N; j++) {
         if (i != j) {
             double r2 = (bodies[j].x - bodies[i].x) * (bodies[j].x - bodies[i].x)
                 + (bodies[j].y - bodies[i].y) * (bodies[j].y - bodies[i].y);
-            double a = global.k * global.m / (r2 * sqrt(r2));
+            double a = global::k * global::m / (r2 * sqrt(r2));
             a_x += a * (bodies[j].x - bodies[i].x);
             a_y += a * (bodies[j].y - bodies[i].y);
         }
     }
 
-    new_body->vx = bodies[i].vx + a_x * global.dt;
-	new_body->vy = bodies[i].vy + a_y * global.dt;
-    new_body->x = bodies[i].x + new_body->vx * global.dt;
-    new_body->y = bodies[i].y + new_body->vy * global.dt;
+    new_body->vx = bodies[i].vx + a_x * global::dt;
+	new_body->vy = bodies[i].vy + a_y * global::dt;
+    new_body->x = bodies[i].x + new_body->vx * global::dt;
+    new_body->y = bodies[i].y + new_body->vy * global::dt;
 }
 
 // pthread worker
@@ -43,7 +43,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 {
     pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * num_threads);
     TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * num_threads);
-    int width = ceil((float)global.N / num_threads);
+    int width = ceil((float)global::N / num_threads);
     int j;
 
     cudaEvent_t start, stop;
@@ -55,7 +55,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
     for (j = 0; j < num_threads; j++) {
         param[j].start = j * width;
         if (j == num_threads - 1) {
-            param[j].end = global.N;
+            param[j].end = global::N;
         } else {
             param[j].end = (j + 1) * width;
         }
