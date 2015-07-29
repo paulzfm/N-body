@@ -14,15 +14,15 @@ void update_body(int i, Body *bodies, Body *new_body)
             double r2 = (bodies[j].x - bodies[i].x) * (bodies[j].x - bodies[i].x)
                 + (bodies[j].y - bodies[i].y) * (bodies[j].y - bodies[i].y);
             double a = global.k * global.m / (r2 * sqrt(r2));
-            a_x += a * (x[j] - x[i]);
-            a_y += a * (y[j] - y[i]);
+            a_x += a * (bodies[j].x - bodies[i].x);
+            a_y += a * (bodies[j].y - bodies[i].y);
         }
     }
 
-    new_body.vx = bodies[i].vx + a_x * global.dt;
-	new_body.vy = bodies[i].vy + a_y * global.dt;
-    new_body.x = bodies[i].x + new_body.vx * global.dt;
-    new_body.y = bodies[i].y + new_body.vy * global.dt;
+    new_body->vx = bodies[i].vx + a_x * global.dt;
+	new_body->vy = bodies[i].vy + a_y * global.dt;
+    new_body->x = bodies[i].x + new_body->vx * global.dt;
+    new_body->y = bodies[i].y + new_body->vy * global.dt;
 }
 
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window)
