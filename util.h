@@ -28,7 +28,9 @@ int screen;
 float xmin, ymin, len_axis;
 int len_window;
 
-extern "C" void update_body(int i, Body *bodies, Body *new_body);
+extern "C" {
+void update_body(int i, Body *bodies, Body *new_body);
+}
 
 Body* load_input(const char *file);
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window);
