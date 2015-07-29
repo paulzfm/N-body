@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <unistd.h>
 #include <X11/Xlib.h>
 #include <pthread.h>
 
