@@ -81,7 +81,7 @@ void render(float *xs, float *ys, int n)
     for (i = 0; i < n; i++) {
         x = (xs[i] + 0.5 * len_axis) / len_axis * len_window;
         y = (ys[i] + 0.5 * len_axis) / len_axis * len_window;
-        printf("drawing (%d, %d)\n", x, y);
+        printf("drawing (%f, %f) -> (%d, %d)\n", xs[i], ys[i], x, y);
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
