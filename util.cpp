@@ -9,8 +9,6 @@ Display *display;
 Window window;
 GC gc;
 int screen;
-float xmin, ymin, len_axis;
-int len_window;
 
 Body* load_input(const char *file)
 {
