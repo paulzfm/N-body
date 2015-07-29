@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 
 // xwindow parameters
 Display *display;
@@ -88,4 +89,5 @@ void xwindow_show(Body *bodies)
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
+	sleep(1);
 }
