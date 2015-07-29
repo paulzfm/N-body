@@ -76,10 +76,10 @@ void render(double *xs, double *ys, int n)
 	XClearArea(display, window, 0, 0, len_window, len_window, 0);
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
-	printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[0], ys[0],
-		(int)(((float)xs[0] - xmin) / len_axis * (float)len_window),
-		(int)(((float)ys[0] - ymin) / len_axis * (float)len_window)
-	);
+	// printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[0], ys[0],
+		// (int)(((float)xs[0] - xmin) / len_axis * (float)len_window),
+		// (int)(((float)ys[0] - ymin) / len_axis * (float)len_window)
+	// );
     for (i = 0; i < n; i++) {
         x = (int)(((float)xs[0] - xmin) / len_axis * (float)len_window);
         y = (int)(((float)ys[0] - ymin) / len_axis * (float)len_window);
@@ -172,10 +172,11 @@ void seq_control(int iter)
 	    for (j = 0; j < N; j++) {
 	        double f_x, f_y;
 	        force_routine(j, &f_x, &f_y);
-			vx_new[i] = vx[i] + f_x * dt / m;
-			vy_new[i] = vy[i] + f_y * dt / m;
-			x_new[i] = x[i] + vx_new[i] * dt;
-			y_new[i] = y[i] + vy_new[i] * dt;
+			vx_new[j] = vx[j] + f_x * dt / m;
+			vy_new[j] = vy[j] + f_y * dt / m;
+			x_new[j] = x[j] + vx_new[j] * dt;
+			y_new[j] = y[j] + vy_new[j] * dt;
+			printf("%d: (%.4lf, %.4lf) -> (%.4lf, %.4lf)\n", j, x[j], y[j], x_new[j], y_new[j]);
 	    }
 
         cudaEventRecord(stop);
