@@ -36,7 +36,8 @@ GC gc;
 int screen;
 
 // scale
-int xmin, ymin, len_axis, len_window;
+float xmin, ymin, len_axis;
+int len_window;
 
 // init xwindow
 void init_xwindow()
@@ -84,7 +85,7 @@ void render(double *xs, double *ys, int n)
     for (i = 0; i < n; i++) {
         x = (xs[i] - xmin) / len_axis * len_window;
         y = (ys[i] - ymin) / len_axis * len_window;
-        // printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
+        printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
@@ -241,8 +242,6 @@ void load_input(const char *sample)
         fscanf(fin, "%lf%lf%lf%lf", x + i, y + i, vx + i, vy + i);
     }
 
-	printf("[read] %lf %lf %lf %lf\n", x[0], y[0], vx[0], vy[0]);
-
     fclose(fin);
     printf("[loader] %d samples loaded.\n", N);
 }
@@ -255,9 +254,9 @@ int main(int argc, char **argv)
             exit(1);
         }
     } else if (argc == 12) {
-        xmin = atoi(argv[8]);
-        ymin = atoi(argv[9]);
-        len_axis = atoi(argv[10]);
+        xmin = atof(argv[8]);
+        ymin = atof(argv[9]);
+        len_axis = atof(argv[10]);
         len_window = atoi(argv[11]);
     } else {
         fprintf(stderr, "Usage: %s num_of_threads m T t  θ enable/disable xmin ymin length Length\n", argv[0]);
