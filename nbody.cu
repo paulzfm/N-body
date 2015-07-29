@@ -34,6 +34,8 @@ Display *display;
 Window window;
 GC gc;
 int screen;
+
+// scale
 int xmin, ymin, len_axis, len_window;
 
 // init xwindow
@@ -49,8 +51,8 @@ void init_xwindow()
 	screen = DefaultScreen(display);
 
 	/* set window position */
-	int x = xmin;
-	int y = ymin;
+	int x = 0;
+	int y = 0;
 
 	/* border width in pixels */
 	int border_width = 0;
@@ -80,8 +82,8 @@ void render(double *xs, double *ys, int n)
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
     for (i = 0; i < n; i++) {
-        x = (xs[i] + 0.5 * len_axis) / len_axis * len_window;
-        y = (ys[i] + 0.5 * len_axis) / len_axis * len_window;
+        x = (xs[i] - xmin) / len_axis * len_window;
+        y = (ys[i] - ymin) / len_axis * len_window;
         // printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
         XDrawPoint(display, window, gc, x, y);
     }
