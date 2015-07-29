@@ -28,8 +28,8 @@ int main(int argc, char **argv)
     printf("[loader] time interval: %f\n", global.dt);
     char file[255];
     strcpy(file, argv[5]);
-    bool opt_bha = argv[6][0] == 'y';
-    bool opt_xwindow = argv[7][0] == 'e';
+    int opt_bha = argv[6][0] == 'y';
+    int opt_xwindow = argv[7][0] == 'e';
 
     if (opt_xwindow) {
         float xmin = atof(argv[8]);
@@ -53,8 +53,8 @@ int main(int argc, char **argv)
     load_input(file, samples);
 
     // record time costs
-    pthread_time = (float*)malloc(sizeof(float) * iter);
-    cuda_time = (float*)malloc(sizeof(float) * iter);
+    float *pthread_time = (float*)malloc(sizeof(float) * iter);
+    float *cuda_time = (float*)malloc(sizeof(float) * iter);
 
     int i, k;
 
