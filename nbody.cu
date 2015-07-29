@@ -82,6 +82,7 @@ void render(double *xs, double *ys, int n)
 {
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
+	printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[0], ys[0], x[0], y[0]);
     for (i = 0; i < n; i++) {
         x = (xs[i] - xmin) / len_axis * len_window;
         y = (ys[i] - ymin) / len_axis * len_window;
@@ -89,7 +90,7 @@ void render(double *xs, double *ys, int n)
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
-    sleep(1);
+    // sleep(1);
 }
 
 // force routine
