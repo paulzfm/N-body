@@ -60,8 +60,8 @@ int main(int argc, char **argv)
 
     // 1 run pthread version
     printf("running pthread version...\n");
-    Body *bodies = malloc(sizeof(Body) * global.N);
-    Body *buffer = malloc(sizeof(Body) * global.N);
+    Body *bodies = (Body*)malloc(sizeof(Body) * global.N);
+    Body *buffer = (Body*)malloc(sizeof(Body) * global.N);
     memcpy(bodies, samples, sizeof(Body) * global.N);
 
     for (k = 0; k < iter; k++) {
