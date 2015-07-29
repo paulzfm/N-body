@@ -21,7 +21,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
     Body *new_bodies, float *elapsed_time)
 {
     pthread_t *threads = malloc(sizeof(pthread_t) * num_threads);
-    Param *param = malloc(sizeof(Param) * num_threads);
+    TaskParam *param = malloc(sizeof(TaskParam) * num_threads);
     int width = ceil((float)global.N / num_threads);
     cudaEventRecord(global.start);
 

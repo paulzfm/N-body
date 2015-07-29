@@ -7,7 +7,7 @@ typedef struct
 {
     int start, end; // [start, end)
     Body *bodies, new_bodies;
-} Param;
+} TaskParam;
 
 // pthread run
 void run_pthread_version(int i, int num_threads, Body *bodies,
