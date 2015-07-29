@@ -5,7 +5,7 @@ util.o: util.c util.h
 	gcc -c util.c -o util.o
 
 run.o: run.cu run.h
-	nvcc -c run.cu -o run.o -arch=sm_30
+	nvcc -c run.cu -o run.o
 
 nbody.o: nbody.c
 	gcc -c nbody.c -o nbody.o
