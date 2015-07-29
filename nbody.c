@@ -37,7 +37,7 @@ int main(int argc, char **argv)
         float len_axis = atof(argv[10]);
         int len_window = atoi(argv[11]);
         printf("[loader] xwindow: enable (%f, %f), %d:%f\n", xmin, ymin, len_window, len_axis);
-        init_xwindow(xmin, ymin, len_axis, len_window);
+        xwindow_init(xmin, ymin, len_axis, len_window);
     } else {
         printf("[loader] xwindow: disable\n");
     }
@@ -49,8 +49,7 @@ int main(int argc, char **argv)
     }
 
     // load sample
-    Body *samples = malloc(sizeof(Body) * global.N);
-    load_input(file, samples);
+    Body *samples = load_input(file);
 
     // record time costs
     float *pthread_time = (float*)malloc(sizeof(float) * iter);

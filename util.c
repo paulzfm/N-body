@@ -4,6 +4,27 @@
 #include <stdlib.h>
 #include <math.h>
 
+Body* load_input(const char *file)
+{
+	FILE *fin = fopen(file, "r");
+	if (!fin) {
+		fprintf(stderr, "[loader] no such file: \"%s\"\n", file);
+		exit(1);
+	}
+
+	fscanf(fin, "%d", &global.N);
+	Body* samples = (Body*)malloc(sizeof(Body) * global.N);
+
+	int i;
+	for (i = 0; i < global.N; i++) {
+		fscanf("%lf%lf%lf%lf", &(samples[i].x), &(samples[i].y),
+			&(samples[i].vx), &(samples[i].vy));
+	}
+
+	fclose(fin);
+	printf("[loader] load from \"%s\": %d samples.\n", file, global.N);
+}
+
 void update_body(int i, Body *bodies, Body *new_body)
 {
 	double a_x = 0;

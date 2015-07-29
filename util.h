@@ -28,6 +28,7 @@ int screen;
 float xmin, ymin, len_axis;
 int len_window;
 
+Body* load_input(const char *file);
 void update_body(int i, Body *bodies, Body *new_body);
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window);
 void xwindow_show(Body *bodies);
