@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <math.h>
 
+extern double m;
+extern double k;
+extern double dt;
+extern int N;
+
 void update_body(int i, Body *bodies, Body *new_body)
 {
 	double a_x = 0;
