@@ -229,6 +229,9 @@ void load_input(const char *sample)
     for (i = 0; i < N; i++) {
         fscanf(fin, "%f%f%f%f", x + i, y + i, vx + i, vy + i);
     }
+
+    fclose(fin);
+    printf("%d samples loaded.\n", N);
 }
 
 int main(int argc, char **argv)
