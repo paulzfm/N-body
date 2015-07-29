@@ -23,6 +23,7 @@ Body* load_input(const char *file)
 
 	fclose(fin);
 	printf("[loader] load from \"%s\": %d samples.\n", file, global.N);
+	return samples;
 }
 
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window)

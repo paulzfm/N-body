@@ -29,14 +29,15 @@ int main(int argc, char **argv)
     char file[255];
     strcpy(file, argv[5]);
     int opt_bha = argv[6][0] == 'y';
-    int opt_xwindow = argv[7][0] == 'e';
+    int opt_xwindow = strcmp(argv[7], 'enable') == 0;
 
     if (opt_xwindow) {
         float xmin = atof(argv[8]);
         float ymin = atof(argv[9]);
         float len_axis = atof(argv[10]);
         int len_window = atoi(argv[11]);
-        printf("[loader] xwindow: enable (%f, %f), %d:%f\n", xmin, ymin, len_window, len_axis);
+        printf("[loader] xwindow: enable (%f, %f), %d:%f\n",
+            xmin, ymin, len_window, len_axis);
         xwindow_init(xmin, ymin, len_axis, len_window);
     } else {
         printf("[loader] xwindow: disable\n");
