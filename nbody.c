@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     char file[255];
     strcpy(file, argv[5]);
     int opt_bha = argv[6][0] == 'y';
-    int opt_xwindow = strcmp(argv[7], 'enable') == 0;
+    int opt_xwindow = strcmp(argv[7], "enable") == 0;
 
     if (opt_xwindow) {
         float xmin = atof(argv[8]);
