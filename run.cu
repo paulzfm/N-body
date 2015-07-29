@@ -23,6 +23,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
     pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * num_threads);
     TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * num_threads);
     int width = ceil((float)global.N / num_threads);
+    int j;
 
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
@@ -33,7 +34,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
     for (j = 0; j < num_threads; j++) {
         param[j].start = j * width;
         if (j == num_threads - 1) {
-            param[j].end = N;
+            param[j].end = global.N;
         } else {
             param[j].end = (j + 1) * width;
         }
