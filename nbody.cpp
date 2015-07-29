@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-double m;
-double dt;
-extern int N;
+double m;     // mass for each body
+double dt;    // time interval
+extern int N; // num of samples
 
 int main(int argc, char **argv)
 {

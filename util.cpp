@@ -12,7 +12,6 @@ int screen;
 float xmin, ymin, len_axis;
 int len_window;
 
-//
 extern double m;
 extern double dt;
 int N;
