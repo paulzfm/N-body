@@ -234,7 +234,7 @@ void load_input(const char *sample)
 int main(int argc, char **argv)
 {
     if (argc == 8) {
-        if (strcmp(argv[7], "enable") != 0) {
+        if (strcmp(argv[7], "enable") == 0) {
             fprintf(stderr, "Option error: expected xwindow size.\n");
             exit(1);
         }
