@@ -20,10 +20,14 @@ void *thread_worker(void *args)
 void run_pthread_version(int i, int num_threads, Body *bodies,
     Body *new_bodies, float *elapsed_time)
 {
-    pthread_t *threads = malloc(sizeof(pthread_t) * num_threads);
-    TaskParam *param = malloc(sizeof(TaskParam) * num_threads);
+    pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * num_threads);
+    TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * num_threads);
     int width = ceil((float)global.N / num_threads);
-    cudaEventRecord(global.start);
+
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);
 
     // create threads to compute
     for (j = 0; j < num_threads; j++) {
@@ -43,9 +47,11 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
         pthread_join(threads[j], NULL);
     }
 
-    cudaEventRecord(global.stop);
-    cudaEventSynchronize(global.stop);
-    cudaEventElapsedTime(elapsed_time, global.start, global.stop);
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(elapsed_time, start, stop);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
 
     free(threads);
     free(param);
