@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <X11/Xlib.h>
 #include <pthread.h>
-
-#include "util.h"
 
 // global data
 int NTHREADS; // number of threads
@@ -28,6 +27,62 @@ cudaEvent_t start, stop;
 
 // time elapsed (in ms)
 float *pthread_time, *cuda_time;
+
+// xwindow
+Display *display;
+Window window;
+GC gc;
+int screen;
+int xmin, ymin, len_axis, len_window;
+
+// init xwindow
+void init_xwindow()
+{
+    /* open connection with the server */
+	display = XOpenDisplay(NULL);
+	if (display == NULL) {
+		fprintf(stderr, "Error: cannot open display\n");
+        exit(1);
+	}
+
+	screen = DefaultScreen(display);
+
+	/* set window position */
+	int x = xmin;
+	int y = ymin;
+
+	/* border width in pixels */
+	int border_width = 0;
+
+	/* create window */
+	window = XCreateSimpleWindow(display, RootWindow(display, screen), x, y,
+        len_window, len_window, border_width,
+        BlackPixel(display, screen), WhitePixel(display, screen));
+
+	/* create graph */
+	XGCValues values;
+	long valuemask = 0;
+
+	gc = XCreateGC(display, window, valuemask, &values);
+	XSetForeground(display, gc, BlackPixel(display, screen));
+	XSetBackground(display, gc, 0X0000FF00);
+	XSetLineAttributes(display, gc, 1, LineSolid, CapRound, JoinRound);
+
+	/* map(show) the window */
+	XMapWindow(display, window);
+	XSync(display, 0);
+}
+
+// render window
+void render(float *xs, float *ys, int n)
+{
+    XSetForeground(display, gc, BlackPixel(display, screen));
+    int i;
+    for (i = 0; i < n; i++) {
+        XDrawPoint(display, window, gc, xs[i], ys[i]);
+    }
+    XFlush(display);
+}
 
 // force routine
 void force_routine(int i, float *f_x, float *f_y)
@@ -87,6 +142,7 @@ void *task(void *args)
     pthread_exit(NULL);
 }
 
+// pthread version main
 void pthread_control(int iter)
 {
     int i, j, k;
@@ -151,6 +207,7 @@ void pthread_control(int iter)
     free(param);
 }
 
+// cuda version main
 void cuda_control(int iter)
 {
     // float *vx_last, *vy_last, *x_last, *y_last;
