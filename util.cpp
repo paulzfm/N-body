@@ -12,17 +12,17 @@ Body* load_input(const char *file)
 		exit(1);
 	}
 
-	fscanf(fin, "%d", &global::N);
-	Body* samples = (Body*)malloc(sizeof(Body) * global::N);
+	fscanf(fin, "%d", &N);
+	Body* samples = (Body*)malloc(sizeof(Body) * N);
 
 	int i;
-	for (i = 0; i < global::N; i++) {
+	for (i = 0; i < N; i++) {
 		fscanf(fin, "%lf%lf%lf%lf", &(samples[i].x), &(samples[i].y),
 			&(samples[i].vx), &(samples[i].vy));
 	}
 
 	fclose(fin);
-	printf("[loader] load from \"%s\": %d samples.\n", file, global::N);
+	printf("[loader] load from \"%s\": %d samples.\n", file, N);
 	return samples;
 }
 
@@ -70,7 +70,7 @@ void xwindow_show(Body *bodies)
 		// (int)(((float)xs[0] - xmin) / len_axis * (float)len_window),
 		// (int)(((float)ys[0] - ymin) / len_axis * (float)len_window)
 	// );
-    for (i = 0; i < global::N; i++) {
+    for (i = 0; i < N; i++) {
         x = (int)(((float)bodies[i].x - xmin) / len_axis * (float)len_window);
         y = (int)(((float)bodies[i].y - ymin) / len_axis * (float)len_window);
         XDrawPoint(display, window, gc, x, y);
