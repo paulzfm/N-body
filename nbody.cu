@@ -70,6 +70,7 @@ void init_xwindow()
 	XSync(display, 0);
 }
 
+
 // render window
 void render(double *xs, double *ys, int n)
 {
@@ -89,33 +90,30 @@ void render(double *xs, double *ys, int n)
     // sleep(1);
 }
 
-// force routine
-void force_routine(int i, double *f_x, double *f_y)
+
+// compute routine
+void compute(int i, double *x, double *y, double *vx, double *vy,
+	double *x_new, double *y_new, double *vx_new, double *vy_new)
 {
     int j;
-    *f_x = 0;
-    *f_y = 0;
+	double f_x = 0;
+	double f_y = 0;
     for (j = 0; j < N; j++) {
         if (i != j) {
             double r2 = (x[j] - x[i]) * (x[j] - x[i]) +
                 (y[j] - y[i]) * (y[j] - y[i]);
             double f = k * m * m / (r2 * sqrt(r2));
-            *f_x += f * (x[j] - x[i]);
-            *f_y += f * (y[j] - y[i]);
+            f_x += f * (x[j] - x[i]);
+            f_y += f * (y[j] - y[i]);
         }
     }
-}
 
-// cuda task routine: update status of i-th body
-void update(int i, double *vx_new, double *vy_new, double *x_new, double *y_new)
-{
-    double f_x, f_y;
-    force_routine(i, &f_x, &f_y);
-    vx_new[i] = vx[i] + f_x * dt / m;
+	vx_new[i] = vx[i] + f_x * dt / m;
     vy_new[i] = vy[i] + f_y * dt / m;
     x_new[i] = x[i] + vx_new[i] * dt;
     y_new[i] = y[i] + vy_new[i] * dt;
 }
+
 
 // pthread task routine
 struct TaskParam
@@ -137,12 +135,8 @@ void *task(void *args)
 	printf("[task] [%d, %d)\n", param->start, param->end);
     int i;
     for (i = param->start; i < param->end; i++) {
-        double f_x, f_y;
-        force_routine(i, &f_x, &f_y);
-        param->vx_new[i] = vx[i] + f_x * dt / m;
-        param->vy_new[i] = vy[i] + f_y * dt / m;
-        param->x_new[i] = x[i] + param->vx_new[i] * dt;
-        param->y_new[i] = y[i] + param->vy_new[i] * dt;
+        compute(i, x, y, vx, vy, param->x_new, param->y_new,
+			param->vx_new, param->vy_new);
     }
 
     pthread_exit(NULL);
@@ -170,12 +164,7 @@ void seq_control(int iter)
         cudaEventRecord(start);
 
 	    for (j = 0; j < N; j++) {
-	        double f_x, f_y;
-	        force_routine(j, &f_x, &f_y);
-			vx_new[j] = vx[j] + f_x * dt / m;
-			vy_new[j] = vy[j] + f_y * dt / m;
-			x_new[j] = x[j] + vx_new[j] * dt;
-			y_new[j] = y[j] + vy_new[j] * dt;
+	        compute(x, y, vx, vy, x_new, y_new, vx_new, vy_new);
 			printf("%d: (%.4lf, %.4lf) -> (%.4lf, %.4lf)\n", j, x[j], y[j], x_new[j], y_new[j]);
 	    }
 
