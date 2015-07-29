@@ -246,7 +246,7 @@ void load_input(const char *sample)
     }
 
     fclose(fin);
-    printf("[loader] %d samples loaded.\n", N);
+    printf("[loader] from \"%255s\": %d samples loaded.\n", sample, N);
 }
 
 int main(int argc, char **argv)
@@ -280,7 +280,7 @@ int main(int argc, char **argv)
     opt_xwindow = argv[7][0] == 'e';
 
     if (opt_xwindow) {
-        printf("[loader] xwindow: enable\n");
+        printf("[loader] xwindow: enable with (%f, %f), %d:%f\n", xmin, ymin, len_window, len_axis);
         init_xwindow();
     } else {
         printf("[loader] xwindow: disable\n");
