@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <math.h>
 
+extern "C" {
+    update_body(int i, Body *bodies, Body *new_body);
+}
+
 // pthread worker
 void *thread_worker(void *args)
 {
