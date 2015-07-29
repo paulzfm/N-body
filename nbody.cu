@@ -19,7 +19,7 @@ bool opt_xwindow; // enable xwindow?
 bool opt_bha;     // use Barnes-Hut algorithm?
 
 // parameters
-float dt = 1.0; // time inteval
+float dt; // time inteval
 double k = 1.0;  // gravitational constant
 
 // timer
@@ -81,7 +81,7 @@ void render(double *xs, double *ys, int n)
     for (i = 0; i < n; i++) {
         x = (xs[i] + 0.5 * len_axis) / len_axis * len_window;
         y = (ys[i] + 0.5 * len_axis) / len_axis * len_window;
-        printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
+        // printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
