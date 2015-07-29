@@ -21,7 +21,7 @@ bool opt_bha;     // use Barnes-Hut algorithm?
 
 // parameters
 float dt; // time inteval
-double k = 1.0;  // gravitational constant
+double k = 0.001;  // gravitational constant
 
 // timer
 cudaEvent_t start, stop;
@@ -95,9 +95,9 @@ void render(double *xs, double *ys, int n)
 void compute(int i, double *x, double *y, double *vx, double *vy,
 	double *x_new, double *y_new, double *vx_new, double *vy_new)
 {
-    int j;
 	double a_x = 0;
 	double a_y = 0;
+	int j;
     for (j = 0; j < N; j++) {
         if (i != j) {
             double r2 = (x[j] - x[i]) * (x[j] - x[i]) +
