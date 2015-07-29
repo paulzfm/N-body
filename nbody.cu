@@ -85,6 +85,7 @@ void render(double *xs, double *ys, int n)
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
+    sleep(1);
 }
 
 // force routine
