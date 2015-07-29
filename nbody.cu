@@ -211,6 +211,8 @@ void pthread_control(int iter)
         }
     }
 
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
     free(vx_new);
     free(vy_new);
     free(x_new);
