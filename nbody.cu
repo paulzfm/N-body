@@ -77,9 +77,11 @@ void init_xwindow()
 void render(float *xs, float *ys, int n)
 {
     XSetForeground(display, gc, BlackPixel(display, screen));
-    int i;
+    int i, x, y;
     for (i = 0; i < n; i++) {
-        XDrawPoint(display, window, gc, xs[i], ys[i]);
+        x = (xs[i] + 0.5 * len_axis) / len_axis * len_window;
+        y = (ys[i] + 0.5 * len_axis) / len_axis * len_window;
+        XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
 }
@@ -183,7 +185,7 @@ void pthread_control(int iter)
         cudaEventSynchronize(stop);
         cudaEventElapsedTime(pthread_time + i, start, stop);
 
-        printf("[] iter: %d, time elapsed: %.4f ms\n", i, pthread_time[i]);
+        printf("[pthread] iter: %d, time elapsed: %.4f ms\n", i, pthread_time[i]);
 
         // commit changes to global data
         for (k = 0; k < N; k++) {
@@ -231,7 +233,7 @@ void load_input(const char *sample)
     }
 
     fclose(fin);
-    printf("%d samples loaded.\n", N);
+    printf("[loader] %d samples loaded.\n", N);
 }
 
 int main(int argc, char **argv)
@@ -252,23 +254,35 @@ int main(int argc, char **argv)
     }
 
     NTHREADS = atoi(argv[1]);
+    printf("[loader] num of threads: %d\n", NTHREADS);
     m = atof(argv[2]);
+    printf("[loader] mass: %f\n", m);
     int iter = atoi(argv[3]);
+    printf("[loader] total iter: %d\n", iter);
     dt = atof(argv[4]);
+    printf("[loader] time interval: %f\n", dt);
     char sample[255];
     strcpy(sample, argv[5]);
     opt_bha = argv[6][0] == 'y';
     opt_xwindow = argv[7][0] == 'e';
 
     if (opt_xwindow) {
+        printf("[loader] xwindow: enable\n");
         init_xwindow();
+    } else {
+        printf("[loader] xwindow: disable\n");
+    }
+
+    if (opt_bha) {
+        printf("[loader] algorithm: bha\n");
+    } else {
+        printf("[loader] algorithm: brute-force\n");
     }
 
     // load sample
     load_input(sample);
 
     // allocate memory
-
     pthread_time = (float*)malloc(sizeof(float) * iter);
     cuda_time = (float*)malloc(sizeof(float) * iter);
 
