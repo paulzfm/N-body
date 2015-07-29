@@ -237,6 +237,8 @@ void load_input(const char *sample)
         fscanf(fin, "%lf%lf%lf%lf", x + i, y + i, vx + i, vy + i);
     }
 
+	printf("[read] %lf %lf %lf %lf\n", x[0], y[0], vx[0], vy[0]);
+
     fclose(fin);
     printf("[loader] %d samples loaded.\n", N);
 }
