@@ -8,7 +8,7 @@ extern double m;
 extern double dt;
 extern int N;
 
-const double k = 0.001;
+const double k = 0.0001;
 
 void update_body(int i, Body *bodies, Body *new_body)
 {
