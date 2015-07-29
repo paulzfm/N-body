@@ -1,5 +1,4 @@
 #include "run.h"
-#include "util.h"
 
 #include <pthread.h>
 #include <stdlib.h>
