@@ -85,7 +85,7 @@ void render(double *xs, double *ys, int n)
     for (i = 0; i < n; i++) {
         x = (xs[i] - xmin) / len_axis * len_window;
         y = (ys[i] - ymin) / len_axis * len_window;
-        printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
+        // printf("drawing (%lf, %lf) -> (%d, %d)\n", xs[i], ys[i], x, y);
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
