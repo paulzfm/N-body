@@ -1,27 +1,20 @@
 #ifndef NBODY_QUAD_TREE_H_
 #define NBODY_QUAD_TREE_H_
 
+#include "util.h"
+
 #define EMPTY -1
 
-struct Body
-{
-    int x;
-    int y;
-    int mass;
-};
-
-struct Rect
+struct Point
 {
     double x;
     double y;
-    double width;
-    double height;
 };
 
 struct Node
 {
-    double mass;
     Point center;
+    int size;
     int children[4]; // index of children, -1 if null
 
     Node()
