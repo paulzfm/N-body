@@ -89,5 +89,5 @@ void xwindow_show(Body *bodies)
         XDrawPoint(display, window, gc, x, y);
     }
     XFlush(display);
-	sleep(1);
+	// sleep(1);
 }
