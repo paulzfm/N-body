@@ -88,6 +88,7 @@ void xwindow_show(Body *bodies)
         y = (int)(((float)bodies[i].y - ymin) / len_axis * (float)len_window);
         XDrawPoint(display, window, gc, x, y);
     }
-    XFlush(display);
+    // XFlush(display);
+	XSync(display, 0);
 	// sleep(1);
 }
