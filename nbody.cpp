@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     }
 
     // load sample
-    Body *samples = load_input(file, (double)m);
+    Body *samples = load_input(file, m);
 
     // record time costs
     float *pthread_time = new float[iter];
@@ -64,6 +64,8 @@ int main(int argc, char **argv)
     Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
     memcpy(bodies, samples, sizeof(Body) * N);
 
+    FILE *fout = fopen("output.txt", "w");
+
     for (int k = 0; k < iter; k++) {
         run_pthread_version(k, num_threads, bodies, pthread_time + k, &tree);
         printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
@@ -71,6 +73,13 @@ int main(int argc, char **argv)
             xwindow_show(bodies, true);
             // xwindow_show(bodies, k % 20 == 0);
         }
+
+        // output to file
+        fprintf(fout, "iter: %d\n", k);
+        for (int i = 0; i < N; i++) {
+            fprintf(fout, "%d (%.4lf, %.4lf)\n", i, bodies[i].x, bodies[i].y);
+        }
+
         for (int i = 0; i < N; i++) {
             if (bodies[i].x < xmin || bodies[i].x > xmin + len_axis
                 || bodies[i].y < ymin || bodies[i].y > ymin + len_axis) {
@@ -81,6 +90,7 @@ int main(int argc, char **argv)
     }
 
     free(bodies);
+    fclose(fout);
 
     // 2 run cuda version
 
