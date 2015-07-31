@@ -57,7 +57,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
     }
 
     // wait
-    for (j = 0; j < num_threads; j++) {
+    for (int j = 0; j < num_threads; j++) {
         pthread_join(threads[j], NULL);
     }
 
