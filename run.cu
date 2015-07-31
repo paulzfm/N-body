@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 
 extern double dt;
 extern int N;
