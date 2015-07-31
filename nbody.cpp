@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-double m;     // mass for each body
 double dt;    // time interval
 extern int N; // num of samples
 
@@ -16,7 +15,7 @@ int main(int argc, char **argv)
             exit(1);
         }
     } else if (argc == 12) {
-        (void*)0;
+        ;
     } else {
         fprintf(stderr, "Usage: %s num_of_threads m T t θ enable/disable xmin ymin length Length\n", argv[0]);
         exit(1);
@@ -24,7 +23,7 @@ int main(int argc, char **argv)
 
     int num_threads = atoi(argv[1]);
     printf("[loader] num of threads: %d\n", num_threads);
-    m = atof(argv[2]);
+    float m = atof(argv[2]);
     printf("[loader] mass: %f\n", m);
     int iter = atoi(argv[3]);
     printf("[loader] total iter: %d\n", iter);
@@ -32,8 +31,9 @@ int main(int argc, char **argv)
     printf("[loader] time interval: %f\n", dt);
     char file[255];
     strcpy(file, argv[5]);
-    int opt_bha = argv[6][0] == 'y';
-    int opt_xwindow = strcmp(argv[7], "enable") == 0;
+    float threshold = atof(argv[6]);
+    printf("[loader] threshold: %f\n", threshold);
+    bool opt_xwindow = strcmp(argv[7], "enable") == 0;
 
     if (opt_xwindow) {
         float xmin = atof(argv[8]);
@@ -47,42 +47,36 @@ int main(int argc, char **argv)
         printf("[loader] xwindow: disable\n");
     }
 
-    if (opt_bha) {
-        printf("[loader] algorithm: bha\n");
-    } else {
-        printf("[loader] algorithm: brute-force\n");
-    }
-
     // load sample
-    Body *samples = load_input(file);
+    Body *samples = load_input(file, m);
 
     // record time costs
-    float *pthread_time = (float*)malloc(sizeof(float) * iter);
-    float *cuda_time = (float*)malloc(sizeof(float) * iter);
+    float *pthread_time = new float[iter];
+    float *cuda_time = new float[iter];
 
-    int i, k;
+    // quad tree
+    QuadTree tree(threshold, xmin, ymin, len_axis, len_axis, N);
 
     // 1 run pthread version
     printf("running pthread version...\n");
-    Body *bodies = (Body*)malloc(sizeof(Body) * N);
-    Body *buffer = (Body*)malloc(sizeof(Body) * N);
+    Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
     memcpy(bodies, samples, sizeof(Body) * N);
 
-    for (k = 0; k < iter; k++) {
-        run_pthread_version(k, num_threads, bodies, buffer, pthread_time + k);
+    for (int k = 0; k < iter; k++) {
+        run_pthread_version(k, num_threads, bodies, pthread_time + k);
         printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
-        for (i = 0; i < N; i++) {
-            bodies[i] = buffer[i];
-        }
         if (opt_xwindow) {
-            xwindow_show(bodies);
+            xwindow_show(bodies, k % 20 == 0);
         }
     }
 
     free(bodies);
-    free(buffer);
 
     // 2 run cuda version
+
+
+    delete[] pthread_time;
+    delete[] cuda_time;
 
     return 0;
 }
