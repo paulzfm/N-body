@@ -20,7 +20,9 @@ void *thread_worker(void *args)
     for (int i = param->start; i < param->end; i++) {
         double a_x = 0;
         double a_y = 0;
-        param->tree->search(0, param->bodies[i], a_x, a_y);
+        int cnt = 0;
+        param->tree->search(0, param->bodies[i], a_x, a_y, cnt);
+        assert(cnt == N - 1);
         UPDATE_BODY(param->bodies[i], a_x, a_y);
     }
 

@@ -44,7 +44,7 @@ public:
 
     void build(Body *bodies);
 
-    void search(int node, const Body& body, double& a_x, double& a_y);
+    void search(int node, const Body& body, double& a_x, double& a_y, int& cnt);
 
     void print(int node = 0, int indent = 0);
 
