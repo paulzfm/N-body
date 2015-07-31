@@ -1,17 +1,7 @@
 #ifndef NBODY_QUAD_TREE_H_
 #define NBODY_QUAD_TREE_H_
 
-// #include "util.h"
-
-struct Body
-{
-    int idx;  // global unique index
-    double x; // x-coordinate
-    double y; // y-coordinate
-    double vx; // x-velocity
-    double vy; // y-velocity
-    double m;  // mass
-};
+#include "util.h"
 
 struct Node
 {
