@@ -119,7 +119,7 @@ void QuadTree::search(int node, const Body& body, double& a_x, double& a_y, int&
     for (int i = 0; i < 4; i++) {
         int child = _nodes[node].children[i];
         if (_nodes[child].status != Node::EMPTY) {
-            search(child, body, a_x, a_y);
+            search(child, body, a_x, a_y, cnt);
         }
     }
 }
