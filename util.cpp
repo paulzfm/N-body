@@ -74,7 +74,7 @@ void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window)
     XSync(display, 0);
 }
 
-void xwindow_show(Body *bodies)
+void xwindow_show(Body *bodies, bool sync)
 {
     XClearArea(display, window, 0, 0, len_window, len_window, 0);
     XSetForeground(display, gc, BlackPixel(display, screen));
@@ -88,7 +88,8 @@ void xwindow_show(Body *bodies)
         y = (int)(((float)bodies[i].y - ymin) / len_axis * (float)len_window);
         XDrawPoint(display, window, gc, x, y);
     }
-    // XFlush(display);
-	XSync(display, 0);
-	// sleep(1);
+
+	if (sync) {
+		XSync(display, 0);
+	}
 }

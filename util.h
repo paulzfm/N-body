@@ -20,6 +20,6 @@ struct Body
 
 Body* load_input(const char *file, double mass);
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window);
-void xwindow_show(Body *bodies);
+void xwindow_show(Body *bodies, bool sync = false);
 
 #endif // NBODY_UTIL_H_

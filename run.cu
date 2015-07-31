@@ -7,8 +7,6 @@
 extern double dt;
 extern int N;
 
-// const double k = 6.67384e-11;
-
 #define UPDATE_BODY(body, a_x, a_y) \
     body.vx += a_x * dt; \
     body.vy += a_y * dt; \
