@@ -10,8 +10,8 @@ extern int N;
 #define UPDATE_BODY(body, a_x, a_y) \
     body.vx += a_x * dt; \
     body.vy += a_y * dt; \
-    body.x += body->vx * dt; \
-    body.y += body->vy * dt;
+    body.x += body.vx * dt; \
+    body.y += body.vy * dt;
 
 // pthread worker
 void *thread_worker(void *args)
