@@ -34,12 +34,13 @@ int main(int argc, char **argv)
     float threshold = atof(argv[6]);
     printf("[loader] threshold: %f\n", threshold);
     bool opt_xwindow = strcmp(argv[7], "enable") == 0;
+    float xmin, ymin, len_axis, len_window;
 
     if (opt_xwindow) {
-        float xmin = atof(argv[8]);
-        float ymin = atof(argv[9]);
-        float len_axis = atof(argv[10]);
-        int len_window = atoi(argv[11]);
+        xmin = atof(argv[8]);
+        ymin = atof(argv[9]);
+        len_axis = atof(argv[10]);
+        len_window = atoi(argv[11]);
         printf("[loader] xwindow: enable (%f, %f), %d:%f\n",
             xmin, ymin, len_window, len_axis);
         xwindow_init(xmin, ymin, len_axis, len_window);
