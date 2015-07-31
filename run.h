@@ -2,16 +2,18 @@
 #define NBODY_RUN_H_
 
 #include "util.h"
+#include "QuadTree.h"
 
-typedef struct
+struct TaskParam
 {
     int start, end; // [start, end)
-    Body *bodies, *new_bodies;
-} TaskParam;
+    Body *bodies;   // bodies
+    QuadTree *tree; // data structure
+};
 
 // pthread run
 void run_pthread_version(int i, int num_threads, Body *bodies,
-    Body *new_bodies, float *elapsed_time);
+    float *elapsed_time);
 
 // cuda run
 

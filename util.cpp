@@ -13,11 +13,10 @@ int screen;
 float xmin, ymin, len_axis;
 int len_window;
 
-extern double m;
 extern double dt;
 int N;
 
-Body* load_input(const char *file)
+Body* load_input(const char *file, double mass)
 {
 	FILE *fin = fopen(file, "r");
 	if (!fin) {
@@ -28,10 +27,11 @@ Body* load_input(const char *file)
 	fscanf(fin, "%d", &N);
 	Body* samples = (Body*)malloc(sizeof(Body) * N);
 
-	int i;
-	for (i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
+		samples[i].idx = i;
 		fscanf(fin, "%lf%lf%lf%lf", &(samples[i].x), &(samples[i].y),
 			&(samples[i].vx), &(samples[i].vy));
+		samples[i].m = mass;
 	}
 
 	fclose(fin);

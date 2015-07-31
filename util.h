@@ -3,15 +3,22 @@
 
 #include <X11/Xlib.h>
 
-typedef struct
+struct Body
 {
+    int idx;  // global unique index
     double x; // x-coordinate
     double y; // y-coordinate
     double vx; // x-velocity
     double vy; // y-velocity
-} Body;
+    double m;  // mass
 
-Body* load_input(const char *file);
+    bool operator != (const Body& body)
+    {
+        return idx != body.idx;
+    }
+};
+
+Body* load_input(const char *file, double mass);
 void xwindow_init(float _xmin, float _ymin, float _len_axis, int _len_window);
 void xwindow_show(Body *bodies);
 
