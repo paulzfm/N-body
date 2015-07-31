@@ -53,6 +53,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
         } else {
             param[j].end = (j + 1) * width;
         }
+        param[j].bodies = bodies;
         param[j].tree = tree;
         pthread_create(threads + j, NULL, thread_worker, param + j);
     }
