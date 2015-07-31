@@ -79,10 +79,6 @@ void xwindow_show(Body *bodies, bool sync)
     XClearArea(display, window, 0, 0, len_window, len_window, 0);
     XSetForeground(display, gc, BlackPixel(display, screen));
     int i, x, y;
-	printf("drawing (%lf, %lf) -> (%d, %d)\n", bodies[754].x, bodies[754].y,
-		(int)(((float)bodies[754].x - xmin) / len_axis * (float)len_window),
-		(int)(((float)bodies[754].y - ymin) / len_axis * (float)len_window)
-	);
     for (i = 0; i < N; i++) {
         x = (int)(((float)bodies[i].x - xmin) / len_axis * (float)len_window);
         y = (int)(((float)bodies[i].y - ymin) / len_axis * (float)len_window);
