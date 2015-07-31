@@ -109,11 +109,10 @@ void QuadTree::insert(const Body& body, int node)
     exit(1);
 }
 
-void QuadTree::search(int node, const Body& body, double& a_x, double& a_y, int& cnt)
+void QuadTree::search(int node, const Body& body, double& a_x, double& a_y)
 {
     if (_nodes[node].status == Node::EXTERNAL) {
         if (_nodes[node].body.idx != body.idx) {
-            cnt++;
             double dis = DISTANCE(body.x, body.y, _nodes[node].body.x, _nodes[node].body.y);
             double a = k * _nodes[node].body.m / (dis * dis * dis);
             a_x += a * (_nodes[node].body.x - body.x);
@@ -124,8 +123,6 @@ void QuadTree::search(int node, const Body& body, double& a_x, double& a_y, int&
 
     double dis = DISTANCE(body.x, body.y, _nodes[node].body.x, _nodes[node].body.y);
     if ((double)_size / dis < _threshold) { // treat as single body
-        // cnt++;
-        fprintf(stderr, "Should not be here!\n");exit(1);
         double a = k * _nodes[node].body.m / (dis * dis * dis);
         a_x += a * (_nodes[node].body.x - body.x);
         a_y += a * (_nodes[node].body.y - body.y);
@@ -135,7 +132,7 @@ void QuadTree::search(int node, const Body& body, double& a_x, double& a_y, int&
     for (int i = 0; i < 4; i++) {
         int child = _nodes[node].children[i];
         if (_nodes[child].status != Node::EMPTY) {
-            search(child, body, a_x, a_y, cnt);
+            search(child, body, a_x, a_y);
         }
     }
 }
