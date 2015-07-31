@@ -1,6 +1,7 @@
 #include "QuadTree.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #define DISTANCE(x1, y1, x2, y2) \
