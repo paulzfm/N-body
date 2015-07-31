@@ -13,7 +13,7 @@ struct TaskParam
 
 // pthread run
 void run_pthread_version(int i, int num_threads, Body *bodies,
-    float *elapsed_time);
+    float *elapsed_time, QuadTree *tree);
 
 // cuda run
 

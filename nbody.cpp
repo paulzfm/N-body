@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     memcpy(bodies, samples, sizeof(Body) * N);
 
     for (int k = 0; k < iter; k++) {
-        run_pthread_version(k, num_threads, bodies, pthread_time + k);
+        run_pthread_version(k, num_threads, bodies, pthread_time + k, &tree);
         printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
         if (opt_xwindow) {
             xwindow_show(bodies, k % 20 == 0);
