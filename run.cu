@@ -22,10 +22,7 @@ void *thread_worker(void *args)
     for (int i = param->start; i < param->end; i++) {
         double a_x = 0;
         double a_y = 0;
-        int cnt = 0;
-        param->tree->search(0, param->bodies[i], a_x, a_y, cnt);
-        printf("cnt=%d\n", cnt);
-        assert(cnt == N - 1);
+        param->tree->search(0, param->bodies[i], a_x, a_y);
         UPDATE_BODY(param->bodies[i], a_x, a_y);
     }
 
