@@ -71,6 +71,13 @@ int main(int argc, char **argv)
             xwindow_show(bodies, true);
             // xwindow_show(bodies, k % 20 == 0);
         }
+        for (int i = 0; i < N; i++) {
+            if (bodies[i].x < xmin || bodies[i].x > xmin + len_axis
+                || bodies[i].y < ymin || bodies[i].y > ymin + len_axis) {
+                fprintf(stderr, "Coordinate out of bound: #%d (%lf, %lf)\n", i, bodies[i].x, bodies[i].y);
+                exit(1);
+            }
+        }
     }
 
     free(bodies);
