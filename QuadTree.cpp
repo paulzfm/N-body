@@ -31,6 +31,7 @@ void QuadTree::print(int node, int indent)
 
 void QuadTree::build(Body *bodies)
 {
+    _next = 1;
     for (int i = 0; i < _N; i++) {
 // printf("now insert body %d...\n", bodies[i].idx);
         insert(bodies[i], 0);
