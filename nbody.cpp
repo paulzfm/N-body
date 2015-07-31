@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     }
 
     // load sample
-    Body *samples = load_input(file, m);
+    Body *samples = load_input(file, (double)m);
 
     // record time costs
     float *pthread_time = new float[iter];
