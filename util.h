@@ -11,11 +11,6 @@ struct Body
     double vx; // x-velocity
     double vy; // y-velocity
     double m;  // mass
-
-    bool operator != (const Body& body)
-    {
-        return idx != body.idx;
-    }
 };
 
 Body* load_input(const char *file, double mass);

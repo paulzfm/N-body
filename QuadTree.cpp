@@ -6,14 +6,6 @@
 #define DISTANCE(x1, y1, x2, y2) \
     (sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))
 
-// void QuadTree::print(int node, int indent)
-// {
-    // for (int i = 0; i < _next; i++) {
-        // printf("(%.2lf, %.2lf), m = %.2lf\n", _nodes[i].body.x,
-            // _nodes[i].body.y, _nodes[i].body.m);
-    // }
-// }
-
 const double QuadTree::k = 6.67384e-11;
 
 void QuadTree::print(int node, int indent)
@@ -103,7 +95,7 @@ void QuadTree::insert(const Body& body, int node)
 void QuadTree::search(int node, const Body& body, double& a_x, double& a_y)
 {
     if (_nodes[node].status == Node::EXTERNAL) {
-        if (_nodes[node].body != body) {
+        if (_nodes[node].body.idx != body.idx) {
             double dis = DISTANCE(body.x, body.y, _nodes[node].body.x, _nodes[node].body.y);
             double a = k * _nodes[node].body.m / (dis * dis * dis);
             a_x += a * (_nodes[node].body.x - body.x);
@@ -122,7 +114,7 @@ void QuadTree::search(int node, const Body& body, double& a_x, double& a_y)
 
     for (int i = 0; i < 4; i++) {
         int child = _nodes[node].children[i];
-        if (_nodes[node].status != Node::EMPTY) {
+        if (_nodes[child].status != Node::EMPTY) {
             search(child, body, a_x, a_y);
         }
     }
