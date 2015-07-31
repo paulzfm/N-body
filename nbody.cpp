@@ -34,7 +34,8 @@ int main(int argc, char **argv)
     float threshold = atof(argv[6]);
     printf("[loader] threshold: %f\n", threshold);
     bool opt_xwindow = strcmp(argv[7], "enable") == 0;
-    float xmin, ymin, len_axis, len_window;
+    float xmin, ymin, len_axis;
+    int len_window;
 
     if (opt_xwindow) {
         xmin = atof(argv[8]);
