@@ -1,7 +1,17 @@
 #ifndef NBODY_QUAD_TREE_H_
 #define NBODY_QUAD_TREE_H_
 
-#include "util.h"
+// #include "util.h"
+
+struct Body
+{
+    int idx;  // global unique index
+    double x; // x-coordinate
+    double y; // y-coordinate
+    double vx; // x-velocity
+    double vy; // y-velocity
+    double m;  // mass
+};
 
 struct Node
 {
@@ -22,8 +32,8 @@ struct Node
     // body locales inside this node?
     bool inside(const Body& body)
     {
-        return (x < body.x && body.x < x + w) &&
-            (y < body.y && body.y < y + h);
+        return (x <= body.x && body.x <= x + w) &&
+            (y <= body.y && body.y <= y + h);
     }
 };
 

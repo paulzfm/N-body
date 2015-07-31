@@ -32,14 +32,24 @@ void QuadTree::print(int node, int indent)
 void QuadTree::build(Body *bodies)
 {
     for (int i = 0; i < _N; i++) {
+// printf("now insert body %d...\n", bodies[i].idx);
         insert(bodies[i], 0);
     }
+
+    int cnt = 0;
+    for (int i = 0; i < _next; i++) {
+        if (_nodes[i].status == Node::EXTERNAL) {
+            cnt++;
+        }
+    }
+    // printf("%d external nodes!\n", cnt);
 }
 
 void QuadTree::insert(const Body& body, int node)
 {
     if (_nodes[node].status == Node::EMPTY) { // is empty node
 // printf("node %d is empty\n", node);
+// printf("insert body %d at %d\n", body.idx, node);
         _nodes[node].body = body;
         _nodes[node].status = Node::EXTERNAL;
         return;
@@ -88,9 +98,13 @@ void QuadTree::insert(const Body& body, int node)
         int child = _nodes[node].children[i];
         if (_nodes[child].inside(body)) {
             insert(body, child);
-            break;
+            return;
         }
     }
+
+    printf("[error] body %d (%.4lf, %.4lf) isn't in any subtree of [%.4lf, %.4lf, %.4lf, %.4lf]\n",
+        body.idx, body.x, body.y, _nodes[node].x, _nodes[node].y, _nodes[node].w, _nodes[node].h);
+    exit(1);
 }
 
 void QuadTree::search(int node, const Body& body, double& a_x, double& a_y, int& cnt)
