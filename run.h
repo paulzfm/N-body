@@ -8,7 +8,7 @@ struct TaskParam
 {
     int start, end; // [start, end)
     Body *bodies;   // bodies
-    QuadTree *tree; // data structure
+    Node *tree;     // data structure
 };
 
 // pthread run

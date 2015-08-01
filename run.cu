@@ -21,6 +21,7 @@ void *thread_worker(void *args)
 
     pthread_exit(NULL);
 */
+    pthread_exit(NULL);
 }
 
 // pthread version
