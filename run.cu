@@ -227,20 +227,24 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
 {
     if (body->idx == 0) {
         printf("now in tree_update: %d\n", body->idx);
+        printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
     }
-    printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
     // acceleration routine
     double a_x = 0;
     double a_y = 0;
     tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
-    printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
+    if (body->idx == 0) {
+        printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
+    }
 
     // update positions
     body->vx += a_x * dt;
     body->vy += a_y * dt;
     body->x += body->vx * dt;
     body->y += body->vy * dt;
-    printf("after: (%.4lf, %.4lf)\n", body->x, body->y);
+    if (body->idx == 0) {
+        printf("after: (%.4lf, %.4lf)\n", body->x, body->y);
+    }
 
     // reverse velocity if out of bound
     if (body->x < nodes[0].x || body->x > nodes[0].x + nodes[0].w ||
