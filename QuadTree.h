@@ -25,6 +25,4 @@ struct Node
 
 #define MAX(x, y) (x > y ? (x) : (y))
 
-const double k = 6.67384e-11;
-
 #endif // NBODY_QUAD_TREE_H_

@@ -11,6 +11,8 @@ extern int n;
 extern double threshold;
 extern double dt;
 
+const double k = 6.67384e-11;
+
 // body locales inside this node?
 __host__ __device__ bool inside(Node *node, Body* body)
 {
