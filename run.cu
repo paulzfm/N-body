@@ -99,7 +99,6 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     double size, int N, double dt)
 {
-    printf("here N=%d, dt=%lf\n", N, dt);
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i >= N) {
         return;
@@ -140,7 +139,6 @@ void run_cuda_version(int i, Body *bodies,
     // cudaEventSynchronize(stop);
     // cudaEventElapsedTime(elapsed_time, start, stop);
 
-    cudaThreadExit();
     cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
     printf("first body now: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
 
@@ -227,17 +225,22 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
-printf("now in tree_update: %d\n", body->idx);
+    if (body->idx == 0) {
+        printf("now in tree_update: %d\n", body->idx);
+    }
+    printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
     // acceleration routine
     double a_x = 0;
     double a_y = 0;
     tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
+    printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
 
     // update positions
     body->vx += a_x * dt;
     body->vy += a_y * dt;
     body->x += body->vx * dt;
     body->y += body->vy * dt;
+    printf("after: (%.4lf, %.4lf)\n", body->x, body->y);
 
     // reverse velocity if out of bound
     if (body->x < nodes[0].x || body->x > nodes[0].x + nodes[0].w ||
