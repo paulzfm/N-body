@@ -98,7 +98,7 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     double size, int N, double dt)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    printf("I am computing %d\n", i);
+    // printf("I am computing %d\n", i);
     if (i >= N) {
         return;
     }
@@ -121,7 +121,7 @@ void run_cuda_version(int i, Body *bodies,
 
     // build tree
     tree_build(bodies, tree, N, &size);
-    // tree_print(tree, 0, 0);
+    tree_print(tree, 0, 0);
 
     cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
     cudaMemcpy(d_tree, tree, sizeof(Node) * n, cudaMemcpyHostToDevice);
@@ -212,7 +212,7 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
     }
     assert(cnt == N);
 
-    printf("build done\n");
+    printf("build done: %d\n", cnt);
 }
 
 
