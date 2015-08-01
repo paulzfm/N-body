@@ -138,6 +138,7 @@ void run_cuda_version(int i, Body *bodies,
     // cudaEventSynchronize(stop);
     // cudaEventElapsedTime(elapsed_time, start, stop);
 
+    cudaThreadExit();
     cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
     printf("first body now: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
 
