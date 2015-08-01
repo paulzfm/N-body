@@ -100,6 +100,7 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     double size, int N, double dt)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
+    printf("I am %d\n", i);
     if (i >= N) {
         return;
     }
