@@ -34,4 +34,10 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size, doubl
 
 __host__ __device__ void tree_print(Node *nodes, int node, int indent);
 
+// help functions
+__host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *next);
+
+__host__ __device__ void tree_search(int node, Body *body, double *a_x,
+    double *a_y, Node *nodes, double size, double threshold);
+
 #endif // NBODY_QUAD_TREE_H_

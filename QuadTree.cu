@@ -66,7 +66,7 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
     *size = MAX(nodes[0].w, nodes[0].h);
 
     // next empty node
-    next = 1;
+    int next = 1;
 
     // insert nodes one by one
     for (int i = 0; i < N; i++) {
@@ -83,8 +83,6 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
     assert(cnt == N);
 
     printf("build done\n");
-
-    return size;
 }
 
 
