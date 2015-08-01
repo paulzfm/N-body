@@ -120,6 +120,7 @@ void run_cuda_version(int i, Body *bodies,
 
     // build tree
     tree_build(bodies, tree, N, &size);
+    tree_print(nodes, 0, 0);
 
     cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
     cudaMemcpy(d_tree, tree, sizeof(Node) * n, cudaMemcpyHostToDevice);
