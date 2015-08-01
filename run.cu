@@ -77,7 +77,7 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold, double s
     if (i >= N) {
         return;
     }
-    tree_update(bodies + i, tree, threshold, size);
+    tree_update(bodies + i, tree, size, threshold);
 }
 
 // cuda version
