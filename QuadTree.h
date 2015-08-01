@@ -30,7 +30,8 @@ struct Node
 // "class" QuadTree: both __host__ and __device__
 __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size);
 
-__host__ __device__ void tree_update(Body *body, Node *nodes, double size, double threshold);
+__host__ __device__ void tree_update(Body *body, Node *nodes, double size,
+    double threshold, double dt);
 
 __host__ __device__ void tree_print(Node *nodes, int node, int indent);
 

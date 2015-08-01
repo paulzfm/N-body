@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <limits>
 #include <assert.h>
 
 #define DISTANCE(x1, y1, x2, y2) \
@@ -38,10 +37,10 @@ __host__ __device__ void tree_print(Node *nodes, int node, int indent)
 __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size)
 {
     // find the min and max
-    double xmin = std::numeric_limits<double>::max();
-    double ymin = std::numeric_limits<double>::max();
-    double xmax = -std::numeric_limits<double>::max();
-    double ymax = -std::numeric_limits<double>::max();
+    double xmin = 1.0e10;
+    double ymin = 1.0e10;
+    double xmax = -1.0e10;
+    double ymax = -1.0e10;
     for (int i = 0; i < N; i++) {
         if (bodies[i].x < xmin) {
             xmin = bodies[i].x;
@@ -86,7 +85,8 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 }
 
 
-__host__ __device__ void tree_update(Body *body, Node *nodes, double size, double threshold)
+__host__ __device__ void tree_update(Body *body, Node *nodes, double size,
+    double threshold, double dt)
 {
     // acceleration routine
     double a_x = 0;
@@ -94,10 +94,10 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size, doubl
     tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
 
     // update positions
-    body->vx += a_x * _dt;
-    body->vy += a_y * _dt;
-    body->x += body->vx * _dt;
-    body->y += body->vy * _dt;
+    body->vx += a_x * dt;
+    body->vy += a_y * dt;
+    body->x += body->vx * dt;
+    body->y += body->vy * dt;
 
     // reverse velocity if out of bound
     if (body->x < nodes[0].x || body->x > nodes[0].x + nodes[0].w ||
@@ -113,7 +113,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
     if (nodes[node].status == Node::EMPTY) { // is empty node
 // printf("node %d is empty\n", node);
 // printf("insert body %d at %d\n", body.idx, node);
-        nodes[node].body = body;
+        nodes[node].body = *body;
         nodes[node].status = Node::EXTERNAL;
         return;
     }
@@ -122,7 +122,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
     Body tmp = nodes[node].body;
 
     // update total mass
-    nodes[node].body.m += body.m;
+    nodes[node].body.m += body->m;
 
     // update center of mass
     nodes[node].body.x = (tmp.x * tmp.m + body->x * body->m) / nodes[node].body.m;
@@ -148,7 +148,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
         for (int i = 0; i < 4; i++) {
             int child = nodes[node].children[i];
             if (nodes[child].inside(tmp)) {
-                tree_insert(tmp, child, nodes, next);
+                tree_insert(&tmp, child, nodes, &next);
                 break;
             }
         }
@@ -159,8 +159,8 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
     // insert body in the appropriate child
     for (int i = 0; i < 4; i++) {
         int child = nodes[node].children[i];
-        if (nodes[child].inside(body)) {
-            tree_insert(body, child, nodes, next);
+        if (nodes[child].inside(*body)) {
+            tree_insert(body, child, nodes, &next);
             return;
         }
     }
