@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <limits>
+#include <assert.h>
 
 #define DISTANCE(x1, y1, x2, y2) \
     (sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))
@@ -76,7 +77,7 @@ void QuadTree::build(Body *bodies)
             cnt++;
         }
     }
-    printf("%d external nodes!\n", cnt);
+    assert(cnt == _N);
 }
 
 
