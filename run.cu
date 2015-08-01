@@ -108,8 +108,6 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     __syncthreads();
     if (i == 0) {
         printf("first body in device: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
-    } else {
-        printf("wtf!\n");
     }
 }
 
@@ -229,6 +227,7 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
+printf("now in tree_update: %d\n", body->idx);
     // acceleration routine
     double a_x = 0;
     double a_y = 0;
