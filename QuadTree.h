@@ -36,6 +36,11 @@ public:
         _nodes = new Node[4 * N];
     }
 
+    ~QuadTree()
+    {
+        delete[] _nodes;
+    }
+
     void build(Body *bodies);
 
     void update(Body *body);
