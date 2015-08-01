@@ -225,10 +225,9 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
-    if (body->idx == 0) {
-        printf("now in tree_update: %d\n", body->idx);
-        printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
-    }
+    printf("now in tree_update: %d\n", body->idx);
+    printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
+
     // acceleration routine
     double a_x = 0;
     double a_y = 0;
@@ -318,6 +317,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
 __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold)
 {
+printf("search: body %d, node %d\n", body->idx, node);
     if (nodes[node].status == Node::EXTERNAL) {
         if (nodes[node].body.idx != body->idx) {
             double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
