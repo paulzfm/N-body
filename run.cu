@@ -109,9 +109,7 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
 
 __global__ void test(Node *tree)
 {
-    printf("root info: [%d] (%.4lf, %.4lf) %.2lf\n", tree[0].status, tree[0].body.x, tree[0].body.y, tree[0].body.m);
-    printf("status: %d, %d, %d\n", Node::EMPTY, Node::INTERNAL, Node::EXTERNAL);
-    printf("children: %d, %d, ...\n", tree[0].children[0], tree[0].children[1]);
+    tree_print(tree, 0, 0);
 }
 
 // cuda version
