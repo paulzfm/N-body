@@ -110,15 +110,15 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
 void run_cuda_version(int i, Body *bodies,
     float *elapsed_time, Node *tree)
 {
-    cudaEvent_t start, stop;
+    // cudaEvent_t start, stop;
     Body *d_bodies;
     Node *d_tree;
     cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
     cudaMalloc((void**)&d_tree, sizeof(Node) * n);
     double size;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-    cudaEventRecord(start);
+    // cudaEventCreate(&start);
+    // cudaEventCreate(&stop);
+    // cudaEventRecord(start);
 
     // build tree
     tree_build(bodies, tree, N, &size);
@@ -132,14 +132,14 @@ void run_cuda_version(int i, Body *bodies,
     printf("compute<<<%d, %d>>>\n", block, 512);
     cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N, dt);
 
-    cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(elapsed_time, start, stop);
+    // cudaEventRecord(stop);
+    // cudaEventSynchronize(stop);
+    // cudaEventElapsedTime(elapsed_time, start, stop);
 
     cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
 
-    cudaEventDestroy(start);
-    cudaEventDestroy(stop);
+    // cudaEventDestroy(start);
+    // cudaEventDestroy(stop);
     cudaFree(d_bodies);
     cudaFree(d_tree);
 }
