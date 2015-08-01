@@ -109,14 +109,19 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
 
 __global__ void test(Node *tree, Body *bodies, int N)
 {
-    for (int i = 0; i < 2933; i++) {
-        if (tree[i].status == Node::INTERNAL) {
-            assert(tree[i].children[0] < 2933);
-            assert(tree[i].children[1] < 2933);
-            assert(tree[i].children[2] < 2933);
-            assert(tree[i].children[3] < 2933);
-        }
-    }
+    // for (int i = 0; i < 2933; i++) {
+    //     if (tree[i].status == Node::INTERNAL) {
+    //         assert(tree[i].children[0] < 2933);
+    //         assert(tree[i].children[1] < 2933);
+    //         assert(tree[i].children[2] < 2933);
+    //         assert(tree[i].children[3] < 2933);
+    //     }
+    // }
+
+    int i = 2732;
+    printf("status=%d, children=%d,%d,%d,%d, [%lf, %lf, %lf, %lf], (%lf, %lf)\n",
+        tree[i].status, tree[i].children[0], tree[i].children[1], tree[i].children[2], tree[i].children[3],
+        tree[i].x, tree[i].y, tree[i].w, tree[i].h, tree[i].body.x, tree[i].body.y);
 }
 
 // cuda version
@@ -142,8 +147,8 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
-    cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
-    // test<<<1, 1>>>(d_tree, d_bodies, N);
+    // cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
+    test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
     cudaError_t err = cudaGetLastError();
     printf("%s\n", cudaGetErrorString(err));
