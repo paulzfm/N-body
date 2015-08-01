@@ -33,7 +33,7 @@ public:
     QuadTree(float threshold, int N, double dt)
         : _threshold(threshold), _N(N), _dt(dt)
     {
-        _nodes = new Node[100 * N];
+        _nodes = new Node[4 * N];
     }
 
     void build(Body *bodies);
