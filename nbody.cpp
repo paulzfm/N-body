@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
     // allocate memory for QuadTree
     n = N * 4;
-    Node *tree = malloc(sizeof(Node) * n);
+    Node *tree = (Node*)malloc(sizeof(Node) * n);
 
     // record time costs
     float *pthread_time = new float[iter];
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
     // 2 run cuda version
     printf("running cuda version...\n");
-    bodies = (Body*)malloc(sizeof(Body) * N); // working array
+    Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
     memcpy(bodies, samples, sizeof(Body) * N);
 
     for (int k = 0; k < iter; k++) {
