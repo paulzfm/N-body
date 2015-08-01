@@ -136,6 +136,8 @@ void run_cuda_version(int i, Body *bodies,
     cudaEventDestroy(stop);
 
     cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
+    cudaFree(d_bodies);
+    cudaFree(d_tree);
 }
 
 
