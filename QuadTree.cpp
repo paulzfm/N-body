@@ -54,6 +54,8 @@ void QuadTree::build(Body *bodies)
         }
     }
 
+    printf("[(%.4lf, %.4lf), (%.4lf, %.4lf)]\n", xmin, ymin, xmax, ymax);
+
     // root node
     _nodes[0].x = xmin - 1.0;
     _nodes[0].y = ymin - 1.0;

@@ -70,7 +70,7 @@ int main(int argc, char **argv)
         printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
         if (opt_xwindow) {
             // xwindow_show(bodies, true);
-            xwindow_show(bodies, k % 40 == 0);
+            xwindow_show(bodies, k % 100 == 0);
         }
     }
 
