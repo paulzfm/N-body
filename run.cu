@@ -128,6 +128,7 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
+    printf("compute<<<%d, %d>>>\n", block, 512);
     cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N, dt);
 
     cudaEventRecord(stop);
