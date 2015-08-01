@@ -109,7 +109,7 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
 
 __global__ void test(Node *tree, Body *bodies, int N)
 {
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < 945; i++) {
         printf("%d %.4lf %.4lf %.4lf %.4lf %4.lf\n",
             bodies[i].idx, bodies[i].x, bodies[i].y, bodies[i].vx, bodies[i].vy, bodies[i].m);
     }
