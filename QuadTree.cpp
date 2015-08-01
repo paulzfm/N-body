@@ -160,8 +160,8 @@ void QuadTree::insert(const Body& body, int node)
         }
     }
 
-    printf("[error] body %d (%.4lf, %.4lf) isn't in any subtree of [%.4lf, %.4lf, %.4lf, %.4lf]\n",
-        body.idx, body.x, body.y, _nodes[node].x, _nodes[node].y, _nodes[node].w, _nodes[node].h);
+    printf("[error] body %d (%.4lf, %.4lf) isn't in any subtree of #%d [%.4lf, %.4lf, %.4lf, %.4lf]\n",
+        body.idx, body.x, body.y, node, _nodes[node].x, _nodes[node].y, _nodes[node].w, _nodes[node].h);
     exit(1);
 }
 
