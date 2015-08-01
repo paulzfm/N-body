@@ -98,8 +98,6 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     double size, int N, double dt)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    printf("root's children: %d, %d, %d, %d\n",
-        tree[0].children[0], tree[0].children[1],tree[0].children[2],tree[0].children[3]);
     if (i >= N) {
         return;
     }
@@ -129,7 +127,6 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
-    printf("compute<<<%d, %d>>>\n", block, 512);
     cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N, dt);
 
     // cudaEventRecord(stop);
