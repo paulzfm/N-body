@@ -225,7 +225,6 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
-    assert(false);
     printf("now in tree_update: %d\n", body->idx);
     printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
 
@@ -233,6 +232,7 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double a_x = 0;
     double a_y = 0;
     tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
+    assert(false);
     printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
 
     // update positions
