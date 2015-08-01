@@ -107,9 +107,12 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     }
 }
 
-__global__ void test(Node *tree)
+__global__ void test(Node *tree, Body *bodies, int N)
 {
     tree_print(tree, 0, 0);
+    for (int i = 0; i < N; i++) {
+        printf("%d\n", bodies[i].idx);
+    }
 }
 
 // cuda version
@@ -136,7 +139,7 @@ void run_cuda_version(int i, Body *bodies,
     // compute
     int block = ceil(N / 512.0);
     // cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
-    test<<<1, 1>>>(d_tree);
+    test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
     cudaError_t err = cudaGetLastError();
     printf("%s\n", cudaGetErrorString(err));
