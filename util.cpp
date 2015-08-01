@@ -86,7 +86,7 @@ void xwindow_show(Body *bodies, bool sync)
     }
 
 	if (sync) {
-		// XSync(display, 0);
-		XFlush(display);
+		XSync(display, 0);
+		// XFlush(display);
 	}
 }
