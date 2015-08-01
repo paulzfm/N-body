@@ -9,21 +9,12 @@
 extern double dt;
 extern int N;
 
-#define UPDATE_BODY(body, a_x, a_y) \
-    body.vx += a_x * dt; \
-    body.vy += a_y * dt; \
-    body.x += body.vx * dt; \
-    body.y += body.vy * dt;
-
 // pthread worker
 void *thread_worker(void *args)
 {
     TaskParam *param = (TaskParam*)args;
     for (int i = param->start; i < param->end; i++) {
-        double a_x = 0;
-        double a_y = 0;
-        param->tree->search(0, param->bodies[i], a_x, a_y);
-        UPDATE_BODY(param->bodies[i], a_x, a_y);
+        param->tree->update(param->bodies[i]);
     }
 
     pthread_exit(NULL);

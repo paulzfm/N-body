@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <limits>
 
 #define DISTANCE(x1, y1, x2, y2) \
     (sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))
 
 const double QuadTree::k = 6.67384e-11;
+
 
 void QuadTree::print(int node, int indent)
 {
@@ -29,10 +31,37 @@ void QuadTree::print(int node, int indent)
     }
 }
 
+
 void QuadTree::build(Body *bodies)
 {
-    _next = 1;
+    // find the min and max
+    double xmin = std::numeric_limits<double>::max();
+    double ymin = std::numeric_limits<double>::max();
+    double xmax = -std::numeric_limits<double>::max();
+    double ymax = -std::numeric_limits<double>::max();
+    for (int i = 0; i < _N; i++) {
+        if (bodies[i].x < xmin) {
+            xmin = bodies[i].x;
+        } else if (bodies[i].x > xmax) {
+            xmax = bodies[i].x;
+        } else if (bodies[i].y < ymin) {
+            ymin = bodies[i].y;
+        } else if (bodies[i].y > ymax) {
+            ymax = bodies[i].y;
+        }
+    }
+
+    // root node
+    _nodes[0].x = xmin - 1.0;
+    _nodes[0].y = ymin - 1.0;
+    _nodes[0].w = xmax + 1.0 - xmin;
+    _nodes[0].h = ymax + 1.0 - ymin;
     _nodes[0].status = Node::EMPTY;
+
+    // next empty node
+    _next = 1;
+
+    // insert nodes one by one
     for (int i = 0; i < _N; i++) {
 // printf("now insert body %d...\n", bodies[i].idx);
         insert(bodies[i], 0);
@@ -44,8 +73,31 @@ void QuadTree::build(Body *bodies)
             cnt++;
         }
     }
-    // printf("%d external nodes!\n", cnt);
+    printf("%d external nodes!\n", cnt);
 }
+
+
+void QuadTree::update(Body *body)
+{
+    // acceleration routine
+    double a_x = 0;
+    double a_y = 0;
+    search(0, body, a_x, a_y);
+
+    // update positions
+    body->vx += a_x * dt;
+    body->vy += a_y * dt;
+    body->x += body->vx * dt;
+    body->y += body->vy * dt;
+
+    // reverse velocity if out of bound
+    if (body->x < _nodes[0].x || body->x > _nodes[0].x + _nodes[0].w ||
+        body->y < _nodes[0].y || body->y > _nodes[0].y + _nodes[0].h) {
+        body->vx = -body->vx;
+        body->vy = -body->vy;
+    }
+}
+
 
 void QuadTree::insert(const Body& body, int node)
 {
@@ -109,23 +161,24 @@ void QuadTree::insert(const Body& body, int node)
     exit(1);
 }
 
-void QuadTree::search(int node, const Body& body, double& a_x, double& a_y)
+
+void QuadTree::search(int node, Body *body, double& a_x, double& a_y)
 {
     if (_nodes[node].status == Node::EXTERNAL) {
-        if (_nodes[node].body.idx != body.idx) {
-            double dis = DISTANCE(body.x, body.y, _nodes[node].body.x, _nodes[node].body.y);
+        if (_nodes[node].body.idx != body->idx) {
+            double dis = DISTANCE(body->x, body->y, _nodes[node].body.x, _nodes[node].body.y);
             double a = k * _nodes[node].body.m / (dis * dis * dis);
-            a_x += a * (_nodes[node].body.x - body.x);
-            a_y += a * (_nodes[node].body.y - body.y);
+            a_x += a * (_nodes[node].body.x - body->x);
+            a_y += a * (_nodes[node].body.y - body->y);
         }
         return;
     }
 
-    double dis = DISTANCE(body.x, body.y, _nodes[node].body.x, _nodes[node].body.y);
-    if ((double)_size / dis < _threshold) { // treat as single body
+    double dis = DISTANCE(body->x, body->y, _nodes[node].body.x, _nodes[node].body.y);
+    if (_size / dis < _threshold) { // treat as single body
         double a = k * _nodes[node].body.m / (dis * dis * dis);
-        a_x += a * (_nodes[node].body.x - body.x);
-        a_y += a * (_nodes[node].body.y - body.y);
+        a_x += a * (_nodes[node].body.x - body->x);
+        a_y += a * (_nodes[node].body.y - body->y);
         return;
     }
 

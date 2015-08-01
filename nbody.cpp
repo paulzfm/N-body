@@ -73,20 +73,6 @@ int main(int argc, char **argv)
             xwindow_show(bodies, true);
             // xwindow_show(bodies, k % 20 == 0);
         }
-
-        // output to file
-        fprintf(fout, "iter: %d\n", k);
-        for (int i = 0; i < N; i++) {
-            fprintf(fout, "%d (%.4lf, %.4lf)\n", i, bodies[i].x, bodies[i].y);
-        }
-
-        for (int i = 0; i < N; i++) {
-            if (bodies[i].x < xmin || bodies[i].x > xmin + len_axis
-                || bodies[i].y < ymin || bodies[i].y > ymin + len_axis) {
-                fprintf(stderr, "Coordinate out of bound: #%d (%lf, %lf)\n", i, bodies[i].x, bodies[i].y);
-                exit(1);
-            }
-        }
     }
 
     free(bodies);

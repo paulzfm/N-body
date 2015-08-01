@@ -30,21 +30,15 @@ struct Node
 class QuadTree
 {
 public:
-    QuadTree(float threshold, double xmin, double ymin,
-        double width, double height, int N)
-        : _threshold(threshold), _N(N), _size(width)
+    QuadTree(float threshold, int N)
+        : _threshold(threshold), _N(N)
     {
         _nodes = new Node[100 * N];
-        _nodes[0].x = xmin;
-        _nodes[0].y = ymin;
-        _nodes[0].w = width;
-        _nodes[0].h = height;
-        _next = 1;
     }
 
     void build(Body *bodies);
 
-    void search(int node, const Body& body, double& a_x, double& a_y);
+    void update(Body *body);
 
     void print(int node = 0, int indent = 0);
 
@@ -59,6 +53,8 @@ private:
     double _size;
 
     void insert(const Body& body, int node);
+
+    void search(int node, Body *body, double& a_x, double& a_y);
 };
 
 #endif // NBODY_QUAD_TREE_H_
