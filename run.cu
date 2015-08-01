@@ -114,19 +114,19 @@ __global__ void test(Node *tree, Body *bodies, int N)
     //         bodies[i].idx, bodies[i].x, bodies[i].y, bodies[i].vx, bodies[i].vy, bodies[i].m);
     // }
 
-    for (int i = 0; i < 1000; i++) {
-        printf("%d# (%d) {%d,%d,%d,%d} [%.4lf, %.4lf, %.4lf, %.4lf], %d# (%.4lf, %.4lf) (%.4lf, %.4lf) %.4lf\n", i,
-            tree[i].status, tree[i].children[0], tree[i].children[1], tree[i].children[2], tree[i].children[3],
-            tree[i].x, tree[i].y, tree[i].w, tree[i].h, tree[i].body.idx, tree[i].body.x, tree[i].body.y,
-            tree[i].body.vx, tree[i].body.vy, tree[i].body.m);
-    }
-
-    // for (int i = 1000; i < 2000; i++) {
+    // for (int i = 0; i < 1000; i++) {
     //     printf("%d# (%d) {%d,%d,%d,%d} [%.4lf, %.4lf, %.4lf, %.4lf], %d# (%.4lf, %.4lf) (%.4lf, %.4lf) %.4lf\n", i,
     //         tree[i].status, tree[i].children[0], tree[i].children[1], tree[i].children[2], tree[i].children[3],
     //         tree[i].x, tree[i].y, tree[i].w, tree[i].h, tree[i].body.idx, tree[i].body.x, tree[i].body.y,
     //         tree[i].body.vx, tree[i].body.vy, tree[i].body.m);
     // }
+
+    for (int i = 1000; i < 2000; i++) {
+        printf("%d# (%d) {%d,%d,%d,%d} [%.4lf, %.4lf, %.4lf, %.4lf], %d# (%.4lf, %.4lf) (%.4lf, %.4lf) %.4lf\n", i,
+            tree[i].status, tree[i].children[0], tree[i].children[1], tree[i].children[2], tree[i].children[3],
+            tree[i].x, tree[i].y, tree[i].w, tree[i].h, tree[i].body.idx, tree[i].body.x, tree[i].body.y,
+            tree[i].body.vx, tree[i].body.vy, tree[i].body.m);
+    }
 
     // for (int i = 2000; i < 2933; i++) {
     //     printf("%d# (%d) {%d,%d,%d,%d} [%.4lf, %.4lf, %.4lf, %.4lf], %d# (%.4lf, %.4lf) (%.4lf, %.4lf) %.4lf\n", i,
