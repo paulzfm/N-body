@@ -147,7 +147,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
         // insert body in the appropriate child
         for (int i = 0; i < 4; i++) {
             int child = nodes[node].children[i];
-            if (nodes[child].inside(tmp)) {
+            if (inside(nodes + child, &tmp)) {
                 tree_insert(&tmp, child, nodes, &next);
                 break;
             }
@@ -159,7 +159,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
     // insert body in the appropriate child
     for (int i = 0; i < 4; i++) {
         int child = nodes[node].children[i];
-        if (nodes[child].inside(*body)) {
+        if (inside(nodes + child, body)) {
             tree_insert(body, child, nodes, &next);
             return;
         }

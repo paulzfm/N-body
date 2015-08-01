@@ -18,14 +18,14 @@ struct Node
     Body body; // body
 
     Node() { status = EMPTY; }
-
-    // body locales inside this node?
-    bool inside(const Body& body)
-    {
-        return (x <= body.x && body.x <= x + w) &&
-            (y <= body.y && body.y <= y + h);
-    }
 };
+
+// body locales inside this node?
+__host__ __device__ bool inside(Node *node, Body* body)
+{
+    return (node->x <= body->x && body->x <= node->x + node->w) &&
+        (node->y <= body->y && body->y <= node->y + node->h);
+}
 
 // "class" QuadTree: both __host__ and __device__
 __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size);
