@@ -29,7 +29,7 @@ __host__ __device__ void tree_print(Node *nodes, int node, int indent)
 
     if (nodes[node].status == Node::INTERNAL) {
         for (int i = 0; i < 4; i++) {
-            print(nodes[node].children[i], indent + 1);
+            tree_print(nodes, nodes[node].children[i], indent + 1);
         }
     }
 }
@@ -150,7 +150,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
         for (int i = 0; i < 4; i++) {
             int child = nodes[node].children[i];
             if (nodes[child].inside(tmp)) {
-                insert(tmp, child);
+                tree_insert(tmp, child, nodes, next);
                 break;
             }
         }
@@ -162,7 +162,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
     for (int i = 0; i < 4; i++) {
         int child = nodes[node].children[i];
         if (nodes[child].inside(body)) {
-            insert(body, child);
+            tree_insert(body, child, nodes, next);
             return;
         }
     }
@@ -197,7 +197,7 @@ __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     for (int i = 0; i < 4; i++) {
         int child = nodes[node].children[i];
         if (nodes[child].status != Node::EMPTY) {
-            search(child, body, a_x, a_y, nodes, size);
+            tree_search(child, body, a_x, a_y, nodes, size, threshold);
         }
     }
 }
