@@ -228,6 +228,8 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     printf("now in tree_update: %d\n", body->idx);
     printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
 
+    assert(false, "I am here!\n");
+
     // acceleration routine
     double a_x = 0;
     double a_y = 0;
