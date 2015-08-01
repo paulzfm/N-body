@@ -5,6 +5,8 @@
 #include <string.h>
 
 extern int N; // num of samples
+int n; // num of nodes
+double threshold;
 
 int main(int argc, char **argv)
 {
@@ -30,7 +32,7 @@ int main(int argc, char **argv)
     printf("[loader] time interval: %f\n", dt);
     char file[255];
     strcpy(file, argv[5]);
-    float threshold = atof(argv[6]);
+    threshold = atof(argv[6]);
     printf("[loader] threshold: %f\n", threshold);
     bool opt_xwindow = strcmp(argv[7], "enable") == 0;
     float xmin, ymin, len_axis;
@@ -51,12 +53,13 @@ int main(int argc, char **argv)
     // load sample
     Body *samples = load_input(file, m);
 
+    // allocate memory for QuadTree
+    n = N * 4;
+    Node *tree = malloc(sizeof(Node) * n);
+
     // record time costs
     float *pthread_time = new float[iter];
     float *cuda_time = new float[iter];
-
-    // quad tree
-    QuadTree tree(threshold, N, dt);
 
     // // 1 run pthread version
     // printf("running pthread version...\n");
