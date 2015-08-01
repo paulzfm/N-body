@@ -56,8 +56,8 @@ void QuadTree::build(Body *bodies)
     // root node
     _nodes[0].x = xmin - 1.0;
     _nodes[0].y = ymin - 1.0;
-    _nodes[0].w = xmax + 1.0 - xmin;
-    _nodes[0].h = ymax + 1.0 - ymin;
+    _nodes[0].w = xmax - xmin + 2.0;
+    _nodes[0].h = ymax - ymin + 2.0;
     _nodes[0].status = Node::EMPTY;
     _size = MAX(_nodes[0].w, _nodes[0].h);
 
