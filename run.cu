@@ -233,18 +233,14 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double a_x = 0;
     double a_y = 0;
     tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
-    if (body->idx == 0) {
-        printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
-    }
+    printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
 
     // update positions
     body->vx += a_x * dt;
     body->vy += a_y * dt;
     body->x += body->vx * dt;
     body->y += body->vy * dt;
-    if (body->idx == 0) {
-        printf("after: (%.4lf, %.4lf)\n", body->x, body->y);
-    }
+    printf("after: (%.4lf, %.4lf)\n", body->x, body->y);
 
     // reverse velocity if out of bound
     if (body->x < nodes[0].x || body->x > nodes[0].x + nodes[0].w ||
