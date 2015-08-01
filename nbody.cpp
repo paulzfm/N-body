@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     float *cuda_time = new float[iter];
 
     // quad tree
-    QuadTree tree(threshold, xmin, ymin, len_axis, len_axis, N);
+    QuadTree tree(threshold, N);
 
     // 1 run pthread version
     printf("running pthread version...\n");
