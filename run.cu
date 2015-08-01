@@ -72,9 +72,6 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 }
 
 // cuda worker
-extern __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
-    double threshold, double dt);
-
 __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     double size, int N, double dt)
 {
