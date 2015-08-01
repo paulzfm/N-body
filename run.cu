@@ -138,8 +138,8 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
-    // cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
-    test<<<1, 1>>>(d_tree, d_bodies, N);
+    cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
+    // test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
     cudaError_t err = cudaGetLastError();
     printf("%s\n", cudaGetErrorString(err));
