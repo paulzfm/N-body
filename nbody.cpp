@@ -81,7 +81,6 @@ int main(int argc, char **argv)
     Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
     memcpy(bodies, samples, sizeof(Body) * N);
 
-    iter = 1;
     for (int k = 0; k < iter; k++) {
         run_cuda_version(k, bodies, pthread_time + k, tree);
         printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);

@@ -101,10 +101,6 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
         return;
     }
     tree_update(bodies + i, tree, size, threshold, dt);
-
-    if (i == 0) {
-        printf("first body in device: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
-    }
 }
 
 __global__ void test(Node *tree, Body *bodies, int N)
@@ -153,26 +149,12 @@ void run_cuda_version(int i, Body *bodies,
     // build tree
     tree_build(bodies, tree, N, &size);
 
-    FILE *file = fopen("cpu_output.txt", "w");
-    for (int i = 0; i < N; i++) {
-        fprintf(file, "%d %.4lf %.4lf %.4lf %.4lf %4.lf\n",
-            bodies[i].idx, bodies[i].x, bodies[i].y, bodies[i].vx, bodies[i].vy, bodies[i].m);
-    }
-
-    for (int i = 0; i < 2933; i++) {
-        fprintf(file, "%d# (%d) {%d,%d,%d,%d} [%.4lf, %.4lf, %.4lf, %.4lf], %d# (%.4lf, %.4lf) (%.4lf, %.4lf) %.4lf\n", i,
-            tree[i].status, tree[i].children[0], tree[i].children[1], tree[i].children[2], tree[i].children[3],
-            tree[i].x, tree[i].y, tree[i].w, tree[i].h, tree[i].body.idx, tree[i].body.x, tree[i].body.y,
-            tree[i].body.vx, tree[i].body.vy, tree[i].body.m);
-    }
-    fclose(file);
-
     cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
     cudaMemcpy(d_tree, tree, sizeof(Node) * n, cudaMemcpyHostToDevice);
 
     // compute
     int block = ceil(N / 512.0);
-    cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
+    cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N, dt);
     // test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
     cudaError_t err = cudaGetLastError();
@@ -183,7 +165,6 @@ void run_cuda_version(int i, Body *bodies,
     // cudaEventElapsedTime(elapsed_time, start, stop);
 
     cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
-    printf("first body now: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
 
     // cudaEventDestroy(start);
     // cudaEventDestroy(stop);
@@ -360,24 +341,18 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
 __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold)
 {
-printf("search: body %d, node %d, a_x=%.2lf\n", body->idx, node, *a_x);
     if (nodes[node].status == Node::EXTERNAL) {
-printf("flag1\n");
         if (nodes[node].body.idx != body->idx) {
-printf("flag2\n");
             double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
             double a = k * nodes[node].body.m / (dis * dis * dis);
             *a_x += a * (nodes[node].body.x - body->x);
             *a_y += a * (nodes[node].body.y - body->y);
-printf("flag3\n");
         }
-printf("flag4\n");
         return;
     }
 
     double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
     if (size / dis < threshold) { // treat as single body
-printf("Impossible!!!!!!\n");
         double a = k * nodes[node].body.m / (dis * dis * dis);
         *a_x += a * (nodes[node].body.x - body->x);
         *a_y += a * (nodes[node].body.y - body->y);
@@ -386,9 +361,7 @@ printf("Impossible!!!!!!\n");
 
     for (int i = 0; i < 4; i++) {
         int child = nodes[node].children[i];
-printf("%d-th children\n", i);
         if (nodes[child].status != Node::EMPTY) {
-printf("search children of %d : #%d\n", node, child);
             tree_search(child, body, a_x, a_y, nodes, size, threshold);
         }
     }
