@@ -109,9 +109,13 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
 
 __global__ void test(Node *tree, Body *bodies, int N)
 {
-    tree_print(tree, 0, 0);
-    for (int i = 0; i < N; i++) {
-        printf("%d\n", bodies[i].idx);
+    for (int i = 0; i < 2933; i++) {
+        if (tree[i].status == Node::INTERNAL) {
+            assert(tree[i].children[0] < 2933);
+            assert(tree[i].children[1] < 2933);
+            assert(tree[i].children[2] < 2933);
+            assert(tree[i].children[3] < 2933);
+        }
     }
 }
 
@@ -138,8 +142,8 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
-    cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
-    // test<<<1, 1>>>(d_tree, d_bodies, N);
+    // cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
+    test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
     cudaError_t err = cudaGetLastError();
     printf("%s\n", cudaGetErrorString(err));
