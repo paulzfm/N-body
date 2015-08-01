@@ -134,6 +134,9 @@ void run_cuda_version(int i, Body *bodies,
     // compute
     int block = ceil(N / 512.0);
     cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
+    cudaStreamSynchronize(0);
+    cudaError_t err = cudaGetLastError();
+    printf("%s\n", cudaGetErrorString(err));
 
     // cudaEventRecord(stop);
     // cudaEventSynchronize(stop);
@@ -232,7 +235,6 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double a_x = 0;
     double a_y = 0;
     tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
-    assert(false);
     printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
 
     // update positions
