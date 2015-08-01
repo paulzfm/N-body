@@ -1,4 +1,5 @@
 #include "run.h"
+#include "QuadTree.h"
 
 #include <pthread.h>
 #include <stdio.h>
