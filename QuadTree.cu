@@ -167,7 +167,8 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
 
     printf("[error] body %d (%.4lf, %.4lf) isn't in any subtree of #%d [%.4lf, %.4lf, %.4lf, %.4lf]\n",
         body->idx, body->x, body->y, node, nodes[node].x, nodes[node].y, nodes[node].w, nodes[node].h);
-    exit(1);
+    // exit(1);
+    assert(1 == 2);
 }
 
 
