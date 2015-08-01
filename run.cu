@@ -100,11 +100,11 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     double size, int N, double dt)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    printf("I am %d\n", i);
     if (i >= N) {
         return;
     }
     tree_update(bodies + i, tree, size, threshold, dt);
+    __syncthreads();
     if (i == 0) {
         printf("first body in device: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
     }
