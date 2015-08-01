@@ -47,14 +47,15 @@ void QuadTree::build(Body *bodies)
             xmin = bodies[i].x;
         } else if (bodies[i].x > xmax) {
             xmax = bodies[i].x;
-        } else if (bodies[i].y < ymin) {
+        }
+        if (bodies[i].y < ymin) {
             ymin = bodies[i].y;
         } else if (bodies[i].y > ymax) {
             ymax = bodies[i].y;
         }
     }
 
-    printf("[(%.4lf, %.4lf), (%.4lf, %.4lf)]\n", xmin, ymin, xmax, ymax);
+    // printf("[(%.4lf, %.4lf), (%.4lf, %.4lf)]\n", xmin, ymin, xmax, ymax);
 
     // root node
     _nodes[0].x = xmin - 1.0;
