@@ -27,40 +27,11 @@ struct Node
     }
 };
 
-class QuadTree
-{
-public:
-    QuadTree(float threshold, int N, double dt)
-        : _threshold(threshold), _N(N), _dt(dt)
-    {
-        _nodes = new Node[4 * N];
-    }
+// "class" QuadTree: both __host__ and __device__
+__host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size);
 
-    ~QuadTree()
-    {
-        delete[] _nodes;
-    }
+__host__ __device__ void tree_update(Body *body, Node *nodes, double size, double threshold);
 
-    void build(Body *bodies);
-
-    void update(Body *body);
-
-    void print(int node = 0, int indent = 0);
-
-    const static double k;
-
-private:
-    Node *_nodes;
-
-    int _next;
-    float _threshold;
-    int _N;
-    double _size;
-    double _dt;
-
-    void insert(const Body& body, int node);
-
-    void search(int node, Body *body, double& a_x, double& a_y);
-};
+__host__ __device__ void tree_print(Node *nodes, int node, int indent);
 
 #endif // NBODY_QUAD_TREE_H_
