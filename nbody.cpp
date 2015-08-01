@@ -62,25 +62,22 @@ int main(int argc, char **argv)
     float *pthread_time = new float[iter];
     float *cuda_time = new float[iter];
 
-    // // 1 run pthread version
-    // printf("running pthread version...\n");
-    // Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
-    // memcpy(bodies, samples, sizeof(Body) * N);
-    //
-    // for (int k = 0; k < iter; k++) {
-    //     run_pthread_version(k, num_threads, bodies, pthread_time + k, &tree);
-    //     printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
-    //     if (opt_xwindow) {
-    //         // xwindow_show(bodies, true);
+    // 1 run pthread version
+    printf("running pthread version...\n");
+    Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
+    memcpy(bodies, samples, sizeof(Body) * N);
+
+    for (int k = 0; k < iter; k++) {
+        run_pthread_version(k, num_threads, bodies, pthread_time + k, tree);
+        printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
+        if (opt_xwindow) {
+            xwindow_show(bodies, true);
     //         xwindow_show(bodies, k % 100 == 0);
-    //     }
-    // }
-    //
-    // free(bodies);
+        }
+    }
 
     // 2 run cuda version
     printf("running cuda version...\n");
-    Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
     memcpy(bodies, samples, sizeof(Body) * N);
 
     iter = 1;

@@ -38,14 +38,11 @@ __host__ __device__ void tree_search(int node, Body *body, double *a_x,
 // pthread worker
 void *thread_worker(void *args)
 {
-/*
     TaskParam *param = (TaskParam*)args;
     for (int i = param->start; i < param->end; i++) {
-        param->tree->update(param->bodies + i);
+        tree_update(param->bodies + i, param->tree, param->size, threshold, dt);
     }
 
-    pthread_exit(NULL);
-*/
     pthread_exit(NULL);
 }
 
@@ -53,10 +50,10 @@ void *thread_worker(void *args)
 void run_pthread_version(int i, int num_threads, Body *bodies,
     float *elapsed_time, Node *tree)
 {
-/*
     pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * num_threads);
     TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * num_threads);
     int width = ceil((float)N / num_threads);
+    double size = 0;
 
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
@@ -64,7 +61,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
     cudaEventRecord(start);
 
     // build tree
-    tree->build(bodies);
+    tree_build(bodies, tree, N, &size);
 
     // create threads to compute
     for (int j = 0; j < num_threads; j++) {
@@ -76,6 +73,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
         }
         param[j].bodies = bodies;
         param[j].tree = tree;
+        param[j].size = size;
         pthread_create(threads + j, NULL, thread_worker, param + j);
     }
 
@@ -92,7 +90,6 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 
     free(threads);
     free(param);
-*/
 }
 
 // cuda worker

@@ -9,6 +9,7 @@ struct TaskParam
     int start, end; // [start, end)
     Body *bodies;   // bodies
     Node *tree;     // data structure
+    double size;
 };
 
 // pthread run
