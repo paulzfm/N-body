@@ -7,6 +7,7 @@
 extern int N; // num of samples
 int n; // num of nodes
 double threshold;
+double dt;
 
 int main(int argc, char **argv)
 {
@@ -28,7 +29,7 @@ int main(int argc, char **argv)
     printf("[loader] mass: %f\n", m);
     int iter = atoi(argv[3]);
     printf("[loader] total iter: %d\n", iter);
-    float dt = atof(argv[4]);
+    dt = atof(argv[4]);
     printf("[loader] time interval: %f\n", dt);
     char file[255];
     strcpy(file, argv[5]);
@@ -83,7 +84,7 @@ int main(int argc, char **argv)
     memcpy(bodies, samples, sizeof(Body) * N);
 
     for (int k = 0; k < iter; k++) {
-        run_cuda_version(k, bodies, pthread_time + k, &tree);
+        run_cuda_version(k, bodies, pthread_time + k, tree);
         printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
         if (opt_xwindow) {
             xwindow_show(bodies, true);

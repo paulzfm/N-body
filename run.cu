@@ -9,6 +9,7 @@
 extern int N;
 extern int n;
 extern double threshold;
+extern double dt;
 
 // pthread worker
 void *thread_worker(void *args)
@@ -71,13 +72,14 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 }
 
 // cuda worker
-__global__ void cuda_worker(Node *tree, Body *bodies, double threshold, double size, int N)
+__global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
+    double size, int N, double dt)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i >= N) {
         return;
     }
-    tree_update(bodies + i, tree, size, threshold);
+    tree_update(bodies + i, tree, size, threshold, dt);
 }
 
 // cuda version
@@ -102,7 +104,7 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
-    cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N);
+    cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N, dt);
 
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
