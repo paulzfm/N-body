@@ -227,7 +227,7 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
     }
     assert(cnt == N);
 
-    printf("build done: %d\n", cnt);
+    printf("build done: %d, next=%d\n", cnt, next);
 }
 
 
