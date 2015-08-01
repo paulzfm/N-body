@@ -86,6 +86,7 @@ int main(int argc, char **argv)
     for (int k = 0; k < iter; k++) {
         run_cuda_version(k, bodies, pthread_time + k, tree);
         printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
+        printf("first body now: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
         if (opt_xwindow) {
             xwindow_show(bodies, true);
             // xwindow_show(bodies, k % 100 == 0);
