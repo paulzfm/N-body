@@ -107,6 +107,8 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     __syncthreads();
     if (i == 0) {
         printf("first body in device: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
+    } else {
+        printf("wtf!\n");
     }
 }
 
