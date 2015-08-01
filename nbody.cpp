@@ -58,27 +58,37 @@ int main(int argc, char **argv)
     // quad tree
     QuadTree tree(threshold, N, dt);
 
-    // 1 run pthread version
-    printf("running pthread version...\n");
-    Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
+    // // 1 run pthread version
+    // printf("running pthread version...\n");
+    // Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
+    // memcpy(bodies, samples, sizeof(Body) * N);
+    //
+    // for (int k = 0; k < iter; k++) {
+    //     run_pthread_version(k, num_threads, bodies, pthread_time + k, &tree);
+    //     printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
+    //     if (opt_xwindow) {
+    //         // xwindow_show(bodies, true);
+    //         xwindow_show(bodies, k % 100 == 0);
+    //     }
+    // }
+    //
+    // free(bodies);
+
+    // 2 run cuda version
+    printf("running cuda version...\n");
+    bodies = (Body*)malloc(sizeof(Body) * N); // working array
     memcpy(bodies, samples, sizeof(Body) * N);
 
-    FILE *fout = fopen("output.txt", "w");
-
     for (int k = 0; k < iter; k++) {
-        run_pthread_version(k, num_threads, bodies, pthread_time + k, &tree);
-        printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
+        run_cuda_version(k, bodies, pthread_time + k, &tree);
+        printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
         if (opt_xwindow) {
-            // xwindow_show(bodies, true);
-            xwindow_show(bodies, k % 100 == 0);
+            xwindow_show(bodies, true);
+            // xwindow_show(bodies, k % 100 == 0);
         }
     }
 
     free(bodies);
-    fclose(fout);
-
-    // 2 run cuda version
-
 
     delete[] pthread_time;
     delete[] cuda_time;

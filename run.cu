@@ -6,7 +6,6 @@
 #include <math.h>
 #include <assert.h>
 
-extern double dt;
 extern int N;
 
 // pthread worker
@@ -62,4 +61,43 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 
     free(threads);
     free(param);
+}
+
+// cuda worker
+__global__ void cuda_worker(QuadTree *tree, Body *bodies)
+{
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+    tree->update(bodies + i);
+}
+
+// cuda version
+void run_cuda_version(int i, Body *bodies,
+    float *elapsed_time, QuadTree *tree)
+{
+    cudaEvent_t start, stop;
+    Body *d_bodies;
+    QuadTree *d_tree;
+    cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
+    cudaMalloc((void**)&d_tree, sizeof(QuadTree));
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);
+
+    // build tree
+    tree->build(bodies);
+
+    cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_tree, tree, sizeof(QuadTree), cudaMemcpyHostToDevice);
+
+    // compute
+    int block = ceil(N / 512.0);
+    cuda_worker<<<block, 512>>>(d_tree, d_bodies);
+
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(elapsed_time, start, stop);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
+
+    cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
 }
