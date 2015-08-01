@@ -326,9 +326,10 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
 __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold)
 {
-// printf("search: body %d, node %d\n", body->idx, node);
+printf("search: body %d, node %d\n", body->idx, node);
     if (nodes[node].status == Node::EXTERNAL) {
         if (nodes[node].body.idx != body->idx) {
+printf("get: node %d\n", node);
             double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
             double a = k * nodes[node].body.m / (dis * dis * dis);
             *a_x += a * (nodes[node].body.x - body->x);
@@ -339,6 +340,7 @@ __host__ __device__ void tree_search(int node, Body *body, double *a_x,
 
     double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
     if (size / dis < threshold) { // treat as single body
+printf("Impossible!!!!!!\n");
         double a = k * nodes[node].body.m / (dis * dis * dis);
         *a_x += a * (nodes[node].body.x - body->x);
         *a_y += a * (nodes[node].body.y - body->y);
@@ -348,6 +350,7 @@ __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     for (int i = 0; i < 4; i++) {
         int child = nodes[node].children[i];
         if (nodes[child].status != Node::EMPTY) {
+printf("search children of %d : #%d\n", node, child);
             tree_search(child, body, a_x, a_y, nodes, size, threshold);
         }
     }
