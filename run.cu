@@ -14,7 +14,7 @@ void *thread_worker(void *args)
 {
     TaskParam *param = (TaskParam*)args;
     for (int i = param->start; i < param->end; i++) {
-        param->tree->update(param->bodies[i]);
+        param->tree->update(param->bodies + i);
     }
 
     pthread_exit(NULL);
