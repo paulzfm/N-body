@@ -19,12 +19,12 @@ __host__ __device__ bool inside(Node *node, Body* body)
 }
 
 // "class" QuadTree: both __host__ and __device__
-extern __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size);
+__host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size);
 
-extern __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
+__host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt);
 
-extern __host__ __device__ void tree_print(Node *nodes, int node, int indent);
+__host__ __device__ void tree_print(Node *nodes, int node, int indent);
 
 // help functions
 __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *next);
@@ -138,8 +138,9 @@ void run_cuda_version(int i, Body *bodies,
     cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
 }
 
-/* implementations */
-extern __host__ __device__ void tree_print(Node *nodes, int node, int indent)
+
+// QuadTree functions
+__host__ __device__ void tree_print(Node *nodes, int node, int indent)
 {
     if (nodes[node].status == Node::EMPTY) {
         return;
@@ -160,7 +161,7 @@ extern __host__ __device__ void tree_print(Node *nodes, int node, int indent)
 }
 
 
-extern __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size)
+__host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size)
 {
     // find the min and max
     double xmin = 1.0e10;
@@ -211,7 +212,7 @@ extern __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, dou
 }
 
 
-extern __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
+__host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
     // acceleration routine
