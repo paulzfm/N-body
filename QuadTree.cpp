@@ -57,6 +57,7 @@ void QuadTree::build(Body *bodies)
     _nodes[0].w = xmax + 1.0 - xmin;
     _nodes[0].h = ymax + 1.0 - ymin;
     _nodes[0].status = Node::EMPTY;
+    _size = MAX(_nodes[0].w, _nodes[0].h);
 
     // next empty node
     _next = 1;
@@ -85,10 +86,10 @@ void QuadTree::update(Body *body)
     search(0, body, a_x, a_y);
 
     // update positions
-    body->vx += a_x * dt;
-    body->vy += a_y * dt;
-    body->x += body->vx * dt;
-    body->y += body->vy * dt;
+    body->vx += a_x * _dt;
+    body->vy += a_y * _dt;
+    body->x += body->vx * _dt;
+    body->y += body->vy * _dt;
 
     // reverse velocity if out of bound
     if (body->x < _nodes[0].x || body->x > _nodes[0].x + _nodes[0].w ||

@@ -30,8 +30,8 @@ struct Node
 class QuadTree
 {
 public:
-    QuadTree(float threshold, int N)
-        : _threshold(threshold), _N(N)
+    QuadTree(float threshold, int N, double dt)
+        : _threshold(threshold), _N(N), _dt(dt)
     {
         _nodes = new Node[100 * N];
     }
@@ -51,6 +51,7 @@ private:
     float _threshold;
     int _N;
     double _size;
+    double _dt;
 
     void insert(const Body& body, int node);
 

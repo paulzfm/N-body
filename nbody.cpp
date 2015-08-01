@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-double dt;    // time interval
 extern int N; // num of samples
 
 int main(int argc, char **argv)
@@ -27,7 +26,7 @@ int main(int argc, char **argv)
     printf("[loader] mass: %f\n", m);
     int iter = atoi(argv[3]);
     printf("[loader] total iter: %d\n", iter);
-    dt = atof(argv[4]);
+    float dt = atof(argv[4]);
     printf("[loader] time interval: %f\n", dt);
     char file[255];
     strcpy(file, argv[5]);
@@ -57,7 +56,7 @@ int main(int argc, char **argv)
     float *cuda_time = new float[iter];
 
     // quad tree
-    QuadTree tree(threshold, N);
+    QuadTree tree(threshold, N, dt);
 
     // 1 run pthread version
     printf("running pthread version...\n");
