@@ -20,4 +20,11 @@ struct Node
     Node() { status = EMPTY; }
 };
 
+#define DISTANCE(x1, y1, x2, y2) \
+    (sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))
+
+#define MAX(x, y) (x > y ? (x) : (y))
+
+const double k = 6.67384e-11;
+
 #endif // NBODY_QUAD_TREE_H_
