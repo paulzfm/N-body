@@ -99,6 +99,7 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
     double size, int N, double dt)
 {
+    printf("here N=%d, dt=%lf\n", N, dt);
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i >= N) {
         return;
