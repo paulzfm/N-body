@@ -85,7 +85,7 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 }
 
 
-__host__ __device__ void tree_update(Body *body, Node *nodes, double size,
+__device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
     // acceleration routine
