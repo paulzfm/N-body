@@ -104,6 +104,9 @@ __global__ void cuda_worker(Node *tree, Body *bodies, double threshold,
         return;
     }
     tree_update(bodies + i, tree, size, threshold, dt);
+    if (i == 0) {
+        printf("first body in device: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
+    }
 }
 
 // cuda version
@@ -136,6 +139,7 @@ void run_cuda_version(int i, Body *bodies,
     // cudaEventElapsedTime(elapsed_time, start, stop);
 
     cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
+    printf("first body now: (%.4lf, %.4lf)\n", bodies[0].x, bodies[0].y);
 
     // cudaEventDestroy(start);
     // cudaEventDestroy(stop);
