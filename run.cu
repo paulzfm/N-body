@@ -139,7 +139,7 @@ void run_cuda_version(int i, Body *bodies,
     // build tree
     tree_build(bodies, tree, N, &size);
 
-    FILE *file = fopen("cpu_output.txt");
+    FILE *file = fopen("cpu_output.txt", "w");
     for (int i = 0; i < N; i++) {
         fprintf(file, "%d %.4lf %.4lf %.4lf %.4lf %4.lf\n",
             bodies[i].idx, bodies[i].x, bodies[i].y, bodies[i].vx, bodies[i].vy, bodies[i].m);
