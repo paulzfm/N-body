@@ -147,8 +147,8 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
-    // cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
-    test<<<1, 1>>>(d_tree, d_bodies, N);
+    cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
+    // test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
     cudaError_t err = cudaGetLastError();
     printf("%s\n", cudaGetErrorString(err));
@@ -337,13 +337,16 @@ __host__ __device__ void tree_search(int node, Body *body, double *a_x,
 {
 printf("search: body %d, node %d, a_x=%.2lf\n", body->idx, node, *a_x);
     if (nodes[node].status == Node::EXTERNAL) {
+printf("flag1\n");
         if (nodes[node].body.idx != body->idx) {
-printf("get: node %d\n", node);
+printf("flag2\n");
             double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
             double a = k * nodes[node].body.m / (dis * dis * dis);
             *a_x += a * (nodes[node].body.x - body->x);
             *a_y += a * (nodes[node].body.y - body->y);
+printf("flag3\n");
         }
+printf("flag4\n");
         return;
     }
 
@@ -358,6 +361,7 @@ printf("Impossible!!!!!!\n");
 
     for (int i = 0; i < 4; i++) {
         int child = nodes[node].children[i];
+printf("%d-th children\n", i);
         if (nodes[child].status != Node::EMPTY) {
 printf("search children of %d : #%d\n", node, child);
             tree_search(child, body, a_x, a_y, nodes, size, threshold);
