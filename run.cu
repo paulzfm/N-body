@@ -330,7 +330,7 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
 __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold)
 {
-printf("search: body %d, node %d\n", body->idx, node);
+printf("search: body %d, node %d, a_x=%.2lf\n", body->idx, node, *a_x);
     if (nodes[node].status == Node::EXTERNAL) {
         if (nodes[node].body.idx != body->idx) {
 printf("get: node %d\n", node);
