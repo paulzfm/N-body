@@ -12,8 +12,8 @@ extern int N;
 // pthread worker
 void *thread_worker(void *args)
 {
-    printf("I am thread for [%d, %d)!\n", param->start, param->end);
     TaskParam *param = (TaskParam*)args;
+    printf("I am thread for [%d, %d)!\n", param->start, param->end);
     for (int i = param->start; i < param->end; i++) {
         param->tree->update(param->bodies + i);
     }
