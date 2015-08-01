@@ -225,11 +225,9 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
-    assert(false, "I am here!\n");
+    assert(false);
     printf("now in tree_update: %d\n", body->idx);
     printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
-
-    assert(false, "I am here!\n");
 
     // acceleration routine
     double a_x = 0;
