@@ -171,7 +171,6 @@ void run_cuda_version(int i, Body *bodies,
     // compute
     int block = ceil(N / 256.0);
 
-    printf("[cuda] begin compute...\n");
     cudaEventRecord(start);
 
     cuda_worker<<<block, 256>>>(d_tree, d_bodies, threshold, size, N, dt);

@@ -88,22 +88,19 @@ int main(int argc, char **argv)
     // allocate gpu memory
     Body *d_bodies;
     Node *d_tree;
-    cudaError_t err;
 
     __WAIT_AVAILABLE_GPU(1);
     cudaSetDevice(1);
     printf("[cuda] set device: 1\n");
-    cudaDeviceSetLimit(cudaLimitStackSize, 4096);
-    printf("[cuda] set stack size: 4096\n");
+    cudaDeviceSetLimit(cudaLimitStackSize, 2048);
+    printf("[cuda] set stack size: 2048\n");
 
-    err = cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
-    printf("[cuda] malloc d_bodies: %s\n", cudaGetErrorString(err));
-    err = cudaMalloc((void**)&d_tree, sizeof(Node) * n);
-    printf("[cuda] malloc d_tree: %s\n", cudaGetErrorString(err));
+    cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
+    cudaMalloc((void**)&d_tree, sizeof(Node) * n);
 
     // let's run
     for (int k = 0; k < iter; k++) {
-        run_cuda_version(k, bodies, pthread_time + k, tree, d_bodies, d_tree);
+        run_cuda_version(k, bodies, cuda_time + k, tree, d_bodies, d_tree);
         printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
         if (opt_xwindow) {
             xwindow_show(bodies, true);
