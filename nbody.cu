@@ -42,14 +42,12 @@ int main(int argc, char **argv)
     threshold = atof(argv[6]);
     printf("[loader] threshold: %f\n", threshold);
     bool opt_xwindow = strcmp(argv[7], "enable") == 0;
-    float xmin, ymin, len_axis;
-    int len_window;
 
     if (opt_xwindow) {
-        xmin = atof(argv[8]);
-        ymin = atof(argv[9]);
-        len_axis = atof(argv[10]);
-        len_window = atoi(argv[11]);
+        float xmin = atof(argv[8]);
+        float ymin = atof(argv[9]);
+        float len_axis = atof(argv[10]);
+        int len_window = atoi(argv[11]);
         printf("[loader] xwindow: enable (%f, %f), %d:%f\n",
             xmin, ymin, len_window, len_axis);
         xwindow_init(xmin, ymin, len_axis, len_window);
@@ -94,15 +92,16 @@ int main(int argc, char **argv)
 
     __WAIT_AVAILABLE_GPU(1);
     cudaSetDevice(1);
-    printf("set device: 1\n");
-    cudaDeviceSetLimit(cudaLimitStackSize, 102400);
-    printf("set limit done.\n");
+    printf("[cuda] set device: 1\n");
+    cudaDeviceSetLimit(cudaLimitStackSize, 4096);
+    printf("[cuda] set stack size: 4096\n");
 
     err = cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
-    printf("malloc d_bodies: %s\n", cudaGetErrorString(err));
+    printf("[cuda] malloc d_bodies: %s\n", cudaGetErrorString(err));
     err = cudaMalloc((void**)&d_tree, sizeof(Node) * n);
-    printf("malloc d_tree: %s\n", cudaGetErrorString(err));
+    printf("[cuda] malloc d_tree: %s\n", cudaGetErrorString(err));
 
+    // let's run
     for (int k = 0; k < iter; k++) {
         run_cuda_version(k, bodies, pthread_time + k, tree, d_bodies, d_tree);
         printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
@@ -112,6 +111,7 @@ int main(int argc, char **argv)
         }
     }
 
+    free(samples);
     free(bodies);
     cudaFree(d_bodies);
     cudaFree(d_tree);

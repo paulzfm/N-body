@@ -151,9 +151,15 @@ void run_cuda_version(int i, Body *bodies,
     tree_build(bodies, tree, N, &size);
 
     err = cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
-    printf("cpy bodies: %s\n", cudaGetErrorString(err));
+    if (err != cudaSuccess) {
+        fprintf(stderr, "cpy bodies: %s\n", cudaGetErrorString(err));
+        exit(1);
+    }
     err = cudaMemcpy(d_tree, tree, sizeof(Node) * n, cudaMemcpyHostToDevice);
-    printf("cpy tree: %s\n", cudaGetErrorString(err));
+    if (err != cudaSuccess) {
+        fprintf(stderr, "cpy tree: %s\n", cudaGetErrorString(err));
+        exit(1);
+    }
 
     // compute
     int block = ceil(N / 512.0);
@@ -161,14 +167,20 @@ void run_cuda_version(int i, Body *bodies,
     // test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
     err = cudaGetLastError();
-    printf("%s\n", cudaGetErrorString(err));
+    if (err != cudaSuccess) {
+        fprintf(stderr, "after calling: %s\n", cudaGetErrorString(err));
+        exit(1);
+    }
 
     // cudaEventRecord(stop);
     // cudaEventSynchronize(stop);
     // cudaEventElapsedTime(elapsed_time, start, stop);
 
     err = cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
-    printf("cpy back bodies: %s\n", cudaGetErrorString(err));
+    if (err != cudaSuccess) {
+        fprintf(stderr, "cpy back: %s\n", cudaGetErrorString(err));
+        exit(1);
+    }
 
     // cudaEventDestroy(start);
     // cudaEventDestroy(stop);
@@ -217,8 +229,6 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
         }
     }
 
-    printf("[(%.4lf, %.4lf), (%.4lf, %.4lf)]\n", xmin, ymin, xmax, ymax);
-
     // root node
     nodes[0].x = xmin - 1.0;
     nodes[0].y = ymin - 1.0;
@@ -242,9 +252,6 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
             cnt++;
         }
     }
-    assert(cnt == N);
-
-    printf("build done: %d, next=%d\n", cnt, next);
 }
 
 
