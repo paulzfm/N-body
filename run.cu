@@ -134,13 +134,11 @@ __global__ void test(Node *tree, Body *bodies, int N)
 
 // cuda version
 void run_cuda_version(int i, Body *bodies,
-    float *elapsed_time, Node *tree)
+    float *elapsed_time, Node *tree, Body *d_bodies, Node *d_tree)
 {
     // cudaEvent_t start, stop;
-    Body *d_bodies;
-    Node *d_tree;
-    cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
-    cudaMalloc((void**)&d_tree, sizeof(Node) * n);
+
+    cudaError_t err;
     double size;
     // cudaEventCreate(&start);
     // cudaEventCreate(&stop);
@@ -149,27 +147,28 @@ void run_cuda_version(int i, Body *bodies,
     // build tree
     tree_build(bodies, tree, N, &size);
 
-    cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_tree, tree, sizeof(Node) * n, cudaMemcpyHostToDevice);
+    err = cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
+    printf("cpy bodies: %s\n", cudaGetErrorString(err));
+    err = cudaMemcpy(d_tree, tree, sizeof(Node) * n, cudaMemcpyHostToDevice);
+    printf("cpy tree: %s\n", cudaGetErrorString(err));
 
     // compute
     int block = ceil(N / 512.0);
     cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N, dt);
     // test<<<1, 1>>>(d_tree, d_bodies, N);
     cudaStreamSynchronize(0);
-    cudaError_t err = cudaGetLastError();
+    err = cudaGetLastError();
     printf("%s\n", cudaGetErrorString(err));
 
     // cudaEventRecord(stop);
     // cudaEventSynchronize(stop);
     // cudaEventElapsedTime(elapsed_time, start, stop);
 
-    cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
+    err = cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
+    printf("cpy back bodies: %s\n", cudaGetErrorString(err));
 
     // cudaEventDestroy(start);
     // cudaEventDestroy(stop);
-    cudaFree(d_bodies);
-    cudaFree(d_tree);
 }
 
 
@@ -249,14 +248,12 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
 __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt)
 {
-    // printf("now in tree_update: %d\n", body->idx);
     // printf("before: (%.4lf, %.4lf)\n", body->x, body->y);
 
     // acceleration routine
     double a_x = 0;
     double a_y = 0;
     tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
-    // printf("a_x=%lf, a_y=%lf\n", a_x, a_y);
 
     // update positions
     body->vx += a_x * dt;
@@ -338,7 +335,39 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
 }
 
 
+// @recursive
 __host__ __device__ void tree_search(int node, Body *body, double *a_x,
+    double *a_y, Node *nodes, double size, double threshold)
+{
+    if (nodes[node].status == Node::EXTERNAL) {
+        if (nodes[node].body.idx != body->idx) {
+            double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
+            double a = k * nodes[node].body.m / (dis * dis * dis);
+            *a_x += a * (nodes[node].body.x - body->x);
+            *a_y += a * (nodes[node].body.y - body->y);
+        }
+        return;
+    }
+
+    double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
+    if (size / dis < threshold) { // treat as single body
+        double a = k * nodes[node].body.m / (dis * dis * dis);
+        *a_x += a * (nodes[node].body.x - body->x);
+        *a_y += a * (nodes[node].body.y - body->y);
+        return;
+    }
+
+    for (int i = 0; i < 4; i++) {
+        int child = nodes[node].children[i];
+        if (nodes[child].status != Node::EMPTY) {
+            tree_search(child, body, a_x, a_y, nodes, size, threshold);
+        }
+    }
+}
+
+
+// @loop
+__host__ __device__ void tree_search_loop(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold)
 {
     if (nodes[node].status == Node::EXTERNAL) {

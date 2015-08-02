@@ -18,6 +18,6 @@ void run_pthread_version(int i, int num_threads, Body *bodies,
 
 // cuda run
 void run_cuda_version(int i, Body *bodies,
-    float *elapsed_time, Node *tree);
+    float *elapsed_time, Node *tree, Body *d_bodies, Node *d_tree);
 
 #endif // NBODY_RUN_H_

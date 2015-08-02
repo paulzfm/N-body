@@ -7,8 +7,8 @@ util.o: util.cpp util.h
 run.o: run.cu run.h
 	nvcc -c run.cu -o run.o
 
-nbody.o: nbody.cpp
-	nvcc -c nbody.cpp -o nbody.o
+nbody.o: nbody.cu
+	nvcc -c nbody.cu -o nbody.o
 
 clean:
 	rm -rf nbody *~ *.o
