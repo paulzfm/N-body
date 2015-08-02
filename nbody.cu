@@ -86,8 +86,6 @@ int main(int argc, char **argv)
         }
     }
 
-    // summary
-
     free(threads);
     free(param);
 
@@ -114,15 +112,47 @@ int main(int argc, char **argv)
         }
     }
 
-    // summary
-
     cudaFree(d_bodies);
     cudaFree(d_tree);
+
+    // summary
+    printf("[summary] computation time (ms)\n");
+
+    float min = 1e8;
+    float max = -1e8;
+    float total = 0.0;
+    for (int i = 0; i < iter; i++) {
+        if (pthread_time[i] < min) {
+            min = pthread_time[i];
+        } else if (pthread_time[i] > max) {
+            max = pthread_time[i];
+        }
+        total += pthread_time[i];
+    }
+    printf("pthread: min %.4f, max %.4f, average %.4f, total %.4f\n",
+        min, max, total / iter, total);
+
+    min = 1e8;
+    max = -1e8;
+    total = 0.0;
+    for (int i = 0; i < iter; i++) {
+        if (cuda_time[i] < min) {
+            min = cuda_time[i];
+        } else if (cuda_time[i] > max) {
+            max = cuda_time[i];
+        }
+        total += cuda_time[i];
+    }
+    printf("cuda   : min %.4f, max %.4f, average %.4f, total %.4f\n",
+        min, max, total / iter, total);
+
 
     free(pthread_time);
     free(cuda_time);
     free(bodies);
     free(samples);
+
+    printf("[loader] all done\n");
 
     return 0;
 }
