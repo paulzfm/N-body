@@ -5,15 +5,16 @@
 #include <string.h>
 #include <unistd.h>
 
-#define __WAIT_AVAILABLE_GPU(x) cudaSetDevice(1);\
-int __waitGPU;\
-while (cudaMalloc((void**)&__waitGPU, sizeof(int)) == 46)\
-{printf("waiting...\n");sleep(1);}printf("running...\n")
+#define __WAIT_AVAILABLE_GPU(x) \
+    cudaSetDevice(x);\
+    int __waitGPU;\
+    while (cudaMalloc((void**)&__waitGPU, sizeof(int)) == 46)\
+    {printf("[gpu] waiting...\n");sleep(1);}
 
 extern int N; // num of samples
 int n; // num of nodes
 double threshold;
-double dt;
+double dt; // time interval
 
 int main(int argc, char **argv)
 {
@@ -63,26 +64,35 @@ int main(int argc, char **argv)
     Node *tree = (Node*)malloc(sizeof(Node) * n);
 
     // record time costs
-    float *pthread_time = new float[iter];
-    float *cuda_time = new float[iter];
+    float *pthread_time = (float*)malloc(sizeof(float) * iter);
+    float *cuda_time = (float*)malloc(sizeof(float) * iter);
 
     // 1 run pthread version
-    // printf("running pthread version...\n");
-    // Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
-    // memcpy(bodies, samples, sizeof(Body) * N);
-    //
-    // for (int k = 0; k < iter; k++) {
-    //     run_pthread_version(k, num_threads, bodies, pthread_time + k, tree);
-    //     printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
-    //     if (opt_xwindow) {
-    //         xwindow_show(bodies, true);
-    // //         xwindow_show(bodies, k % 100 == 0);
-    //     }
-    // }
+    printf("[pthread] launch\n");
+    Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
+    memcpy(bodies, samples, sizeof(Body) * N);
+
+    // allocate memory for threads
+    pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * num_threads);
+    TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * num_threads);
+
+    // run
+    for (int k = 0; k < iter; k++) {
+        run_pthread_version(k, num_threads, bodies, pthread_time + k, tree,
+            threads, param);
+        printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
+        if (opt_xwindow) {
+            xwindow_show(bodies, true);
+        }
+    }
+
+    // summary
+
+    free(threads);
+    free(param);
 
     // 2 run cuda version
-    printf("running cuda version...\n");
-    Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array on cpu
+    printf("[cuda] launch\n");
     memcpy(bodies, samples, sizeof(Body) * N);
 
     // allocate gpu memory
@@ -90,32 +100,29 @@ int main(int argc, char **argv)
     Node *d_tree;
 
     __WAIT_AVAILABLE_GPU(1);
-    cudaSetDevice(1);
-    printf("[cuda] set device: 1\n");
-    cudaDeviceSetLimit(cudaLimitStackSize, 10240);
-    printf("[cuda] set stack size: 10240\n");
+    // cudaDeviceSetLimit(cudaLimitStackSize, 10240);
 
     cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
     cudaMalloc((void**)&d_tree, sizeof(Node) * n);
 
-    // let's run
+    // run
     for (int k = 0; k < iter; k++) {
         run_cuda_version(k, bodies, cuda_time + k, tree, d_bodies, d_tree);
         printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
-        printf("body 0: (%lf, %lf)\n", bodies[0].x, bodies[0].y);
         if (opt_xwindow) {
             xwindow_show(bodies, true);
-            // xwindow_show(bodies, k % 100 == 0);
         }
     }
 
-    free(samples);
-    free(bodies);
+    // summary
+
     cudaFree(d_bodies);
     cudaFree(d_tree);
 
-    delete[] pthread_time;
-    delete[] cuda_time;
+    free(pthread_time);
+    free(cuda_time);
+    free(bodies);
+    free(samples);
 
     return 0;
 }

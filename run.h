@@ -4,17 +4,18 @@
 #include "util.h"
 #include "QuadTree.h"
 
+#include <pthread.h>
+
 struct TaskParam
 {
     int start, end; // [start, end)
     Body *bodies;   // bodies
     Node *tree;     // data structure
-    double size;
 };
 
 // pthread run
 void run_pthread_version(int i, int num_threads, Body *bodies,
-    float *elapsed_time, Node *tree);
+    float *elapsed_time, Node *tree, pthread_t *threads, TaskParam *param);
 
 // cuda run
 void run_cuda_version(int i, Body *bodies,

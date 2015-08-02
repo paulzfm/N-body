@@ -3,6 +3,8 @@
 
 #include "util.h"
 
+#include <math.h>
+
 struct Node
 {
     int status;
