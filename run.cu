@@ -140,15 +140,22 @@ void run_cuda_version(int i, Body *bodies,
     float *elapsed_time, Node *tree, Body *d_bodies, Node *d_tree)
 {
     cudaEvent_t start, stop;
-
     cudaError_t err;
     double size;
+    float build_time;
+
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     cudaEventRecord(start);
 
     // build tree
     tree_build(bodies, tree, N, &size);
+
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(&build_time, start, stop);
+
+    printf("[cuda] build tree: %.4f ms\n", build_time);
 
     err = cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
     if (err != cudaSuccess) {
@@ -163,14 +170,10 @@ void run_cuda_version(int i, Body *bodies,
 
     // compute
     int block = ceil(N / 512.0);
+
+    cudaEventRecord(start);
+
     cuda_worker<<<block, 512>>>(d_tree, d_bodies, threshold, size, N, dt);
-    // test<<<1, 1>>>(d_tree, d_bodies, N);
-    cudaStreamSynchronize(0);
-    err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        fprintf(stderr, "after calling: %s\n", cudaGetErrorString(err));
-        exit(1);
-    }
 
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
