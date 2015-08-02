@@ -92,6 +92,7 @@ int main(int argc, char **argv)
 
     cudaSetDevice(1);
     cudaDeviceSetLimit(cudaLimitStackSize, 102400);
+    printf("set limit done.\n");
 
     for (int k = 0; k < iter; k++) {
         run_cuda_version(k, bodies, pthread_time + k, tree, d_bodies, d_tree);
