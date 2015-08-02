@@ -3,7 +3,6 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <assert.h>
 
 extern int N;
@@ -20,8 +19,8 @@ __host__ __device__ bool inside(Node *node, Body* body)
         (node->y <= body->y && body->y <= node->y + node->h);
 }
 
-// "class" QuadTree: both __host__ and __device__
-__host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size);
+// "class" QuadTree
+void tree_build(Body *bodies, Node *nodes, int N, double *size);
 
 __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     double threshold, double dt);
@@ -29,13 +28,13 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
 __host__ __device__ void tree_print(Node *nodes, int node, int indent);
 
 // help functions
-__host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *next);
+void tree_insert(Body *body, int node, Node *nodes, int *next);
 
 __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold);
 
 __host__ __device__ void tree_search_loop(int node, Body *body, double *a_x,
-        double *a_y, Node *nodes, double size, double threshold);
+    double *a_y, Node *nodes, double size, double threshold);
 
 
 // pthread worker
@@ -157,6 +156,7 @@ void run_cuda_version(int i, Body *bodies,
 
     printf("[cuda] build tree: %.4f ms\n", build_time);
 
+/*
     err = cudaMemcpy(d_bodies, bodies, sizeof(Body) * N, cudaMemcpyHostToDevice);
     if (err != cudaSuccess) {
         fprintf(stderr, "cpy bodies: %s\n", cudaGetErrorString(err));
@@ -173,17 +173,28 @@ void run_cuda_version(int i, Body *bodies,
 
     cudaEventRecord(start);
 
-    cuda_worker<<<block, 256>>>(d_tree, d_bodies, threshold, size, N, dt);
+    // cuda_worker<<<block, 256>>>(d_tree, d_bodies, threshold, size, N, dt);
+    cuda_worker<<<1, 1>>>(d_tree, d_bodies, threshold, size, N, dt);
 
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(elapsed_time, start, stop);
 
+    printf("[cuda] search: %.4f ms\n", *elapsed_time);
+*/
+    cudaEventRecord(start);
+    tree_update(bodies, tree, size, threshold, dt);
+    cudaEventRecord(stop);
+    cudaEventElapsedTime(&build_time, start, stop);
+    printf("[seq] search: %.4f ms\n", build_time);
+
+/*
     err = cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
     if (err != cudaSuccess) {
         fprintf(stderr, "cpy back: %s\n", cudaGetErrorString(err));
         exit(1);
     }
+*/
 
     cudaEventDestroy(start);
     cudaEventDestroy(stop);
@@ -212,7 +223,7 @@ __host__ __device__ void tree_print(Node *nodes, int node, int indent)
 }
 
 
-__host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *size)
+void tree_build(Body *bodies, Node *nodes, int N, double *size)
 {
     // find the min and max
     double xmin = 1.0e10;
@@ -233,10 +244,11 @@ __host__ __device__ void tree_build(Body *bodies, Node *nodes, int N, double *si
     }
 
     // root node
-    nodes[0].x = xmin - 1.0;
-    nodes[0].y = ymin - 1.0;
-    nodes[0].w = xmax - xmin + 2.0;
-    nodes[0].h = ymax - ymin + 2.0;
+    double eps = 0.001;
+    nodes[0].x = xmin - eps;
+    nodes[0].y = ymin - eps;
+    nodes[0].w = xmax - xmin + 2 * eps;
+    nodes[0].h = ymax - ymin + 2 * eps;
     nodes[0].status = Node::EMPTY;
     *size = MAX(nodes[0].w, nodes[0].h);
 
@@ -266,7 +278,8 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
     // acceleration routine
     double a_x = 0;
     double a_y = 0;
-    tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
+    // tree_search(0, body, &a_x, &a_y, nodes, size, threshold);
+    tree_search_loop(0, body, &a_x, &a_y, nodes, size, threshold);
 
     // update positions
     body->vx += a_x * dt;
@@ -284,7 +297,7 @@ __host__ __device__ void tree_update(Body *body, Node *nodes, double size,
 }
 
 
-__host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *next)
+void tree_insert(Body *body, int node, Node *nodes, int *next)
 {
     if (nodes[node].status == Node::EMPTY) { // is empty node
 // printf("node %d is empty\n", node);
@@ -383,28 +396,50 @@ __host__ __device__ void tree_search(int node, Body *body, double *a_x,
 __host__ __device__ void tree_search_loop(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold)
 {
-    if (nodes[node].status == Node::EXTERNAL) {
-        if (nodes[node].body.idx != body->idx) {
-            double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
+    int stack[64];
+    stack[0] = node;
+    int stack_ptr = 0;
+    int cnt = 0;
+
+    while (stack_ptr >= 0) {
+        cnt++;
+        node = stack[stack_ptr];
+
+        if (nodes[node].status == Node::EXTERNAL) {
+            if (nodes[node].body.idx != body->idx) {
+                double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
+                double a = k * nodes[node].body.m / (dis * dis * dis);
+                *a_x += a * (nodes[node].body.x - body->x);
+                *a_y += a * (nodes[node].body.y - body->y);
+            }
+            // pop
+            --stack_ptr;
+            continue;
+        }
+
+        double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
+        printf("%lf / %lf = %lf\n", size, dis, size / dis);
+        if (size / dis < threshold) { // treat as single body
+printf("INSIDE!\n");
             double a = k * nodes[node].body.m / (dis * dis * dis);
             *a_x += a * (nodes[node].body.x - body->x);
             *a_y += a * (nodes[node].body.y - body->y);
+            // pop
+            --stack_ptr;
+            continue;
         }
-        return;
+
+        // push children
+        for (int i = 3; i >= 0; i--) {
+            int child = nodes[node].children[i];
+            if (nodes[child].status != Node::EMPTY) {
+                stack[stack_ptr++] = child;
+            }
+        }
+
+        --stack_ptr;
+        // assert(stack_ptr < 64);
     }
 
-    double dis = DISTANCE(body->x, body->y, nodes[node].body.x, nodes[node].body.y);
-    if (size / dis < threshold) { // treat as single body
-        double a = k * nodes[node].body.m / (dis * dis * dis);
-        *a_x += a * (nodes[node].body.x - body->x);
-        *a_y += a * (nodes[node].body.y - body->y);
-        return;
-    }
-
-    for (int i = 0; i < 4; i++) {
-        int child = nodes[node].children[i];
-        if (nodes[child].status != Node::EMPTY) {
-            tree_search(child, body, a_x, a_y, nodes, size, threshold);
-        }
-    }
+    printf("Total count loop: %d\n", cnt);
 }

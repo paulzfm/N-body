@@ -92,8 +92,8 @@ int main(int argc, char **argv)
     __WAIT_AVAILABLE_GPU(1);
     cudaSetDevice(1);
     printf("[cuda] set device: 1\n");
-    cudaDeviceSetLimit(cudaLimitStackSize, 2048);
-    printf("[cuda] set stack size: 2048\n");
+    cudaDeviceSetLimit(cudaLimitStackSize, 10240);
+    printf("[cuda] set stack size: 10240\n");
 
     cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
     cudaMalloc((void**)&d_tree, sizeof(Node) * n);
@@ -102,6 +102,7 @@ int main(int argc, char **argv)
     for (int k = 0; k < iter; k++) {
         run_cuda_version(k, bodies, cuda_time + k, tree, d_bodies, d_tree);
         printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
+        printf("body 0: (%lf, %lf)\n", bodies[0].x, bodies[0].y);
         if (opt_xwindow) {
             xwindow_show(bodies, true);
             // xwindow_show(bodies, k % 100 == 0);
