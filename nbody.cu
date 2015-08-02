@@ -90,6 +90,7 @@ int main(int argc, char **argv)
     err = cudaMalloc((void**)&d_tree, sizeof(Node) * n);
     printf("malloc d_tree: %s\n", cudaGetErrorString(err));
 
+    cudaSetDevice(1);
     cudaDeviceSetLimit(cudaLimitStackSize, 102400);
 
     for (int k = 0; k < iter; k++) {
