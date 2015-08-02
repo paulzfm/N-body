@@ -139,13 +139,13 @@ __global__ void test(Node *tree, Body *bodies, int N)
 void run_cuda_version(int i, Body *bodies,
     float *elapsed_time, Node *tree, Body *d_bodies, Node *d_tree)
 {
-    // cudaEvent_t start, stop;
+    cudaEvent_t start, stop;
 
     cudaError_t err;
     double size;
-    // cudaEventCreate(&start);
-    // cudaEventCreate(&stop);
-    // cudaEventRecord(start);
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);
 
     // build tree
     tree_build(bodies, tree, N, &size);
@@ -172,9 +172,9 @@ void run_cuda_version(int i, Body *bodies,
         exit(1);
     }
 
-    // cudaEventRecord(stop);
-    // cudaEventSynchronize(stop);
-    // cudaEventElapsedTime(elapsed_time, start, stop);
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    cudaEventElapsedTime(elapsed_time, start, stop);
 
     err = cudaMemcpy(bodies, d_bodies, sizeof(Body) * N, cudaMemcpyDeviceToHost);
     if (err != cudaSuccess) {
@@ -182,8 +182,8 @@ void run_cuda_version(int i, Body *bodies,
         exit(1);
     }
 
-    // cudaEventDestroy(start);
-    // cudaEventDestroy(stop);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
 }
 
 
