@@ -1,0 +1,160 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% fonts
+\usepackage{xeCJK}
+\setCJKmainfont[BoldFont=SimHei]{SimSun}
+\setCJKfamilyfont{hei}{SimHei}
+\setCJKfamilyfont{kai}{KaiTi}
+\setCJKfamilyfont{fang}{FangSong}
+\newcommand{\hei}{\CJKfamily{hei}}
+\newcommand{\kai}{\CJKfamily{kai}}
+\newcommand{\fang}{\CJKfamily{fang}}
+
+% style
+\usepackage[top=2.54cm, bottom=2.54cm, left=3.18cm, right=3.18cm]{geometry}
+\linespread{1.5}
+\usepackage{indentfirst}
+\parindent 2em
+% \punctstyle{quanjiao}
+% \renewcommand{\today}{\number\year 年 \number\month 月 \number\day 日}
+
+% figures and tables
+\usepackage{graphicx}
+\usepackage[font={bf, footnotesize}, textfont=md]{caption}
+\makeatletter
+    \newcommand\fcaption{\def\@captype{figure}\caption}
+    \newcommand\tcaption{\def\@captype{table}\caption}
+\makeatother
+\usepackage{booktabs}
+\renewcommand\figurename{图}
+\renewcommand\tablename{表}
+\newcommand{\fref}[1]{\textbf{图\ref{#1}}}
+\newcommand{\tref}[1]{\textbf{表\ref{#1}}}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}} % multiply lines in one grid
+
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily}
+
+\usepackage{clrscode}
+\usepackage{url}
+
+% start of document
+\title{\hei N-body Report}
+\author{\kai 朱俸民 \quad 2012011894}
+\date{\kai \today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This project solves the classical N-body problem on both CPU (pthread version) and GPU (cuda version) with XWindow support (to display the locations of bodies).
+
+\section{Algorithm}
+
+In order to solve large scale N-body problem, we use Barnes-Hut algorithm (BHA). The time complexity of classical brute-force algorithm, say computing force pair by pair, is $O(n^2)$, where $n$ donates the number of bodies. When the sample size is large, it takes a huge time to solve. However, the time complexity of BHA is $O(n \log n)$. BHA uses a quad-tree (for 2D samples) to organize data. When computing the force, we traverse the tree from the root node but we stop when we either reach the leaf node or the area is far away from the body (we use a th to measure), for the latter, we regard all bodies in that area as a signal area. Constructing the tree requires a time of $O(n \log n)$, and so does computing all the forces. Thus, BHA is a better way to solve N-body problem.
+
+\section{Parallel}
+
+We focus parallel methods on computing forces. We use sequential method for tree constructing since the computing part, not the constructing part, is the bottleneck for this problem.
+
+To keep things simple and clear, if we have $n$ bodies, we divide the whole computing problems into exactly $n$ tasks. That is to say, we need to compute the force for each of the $n$ bodies. When we compute on GPU, we simply let each thread do one of these tasks. When we compute on CPU, we divide tasks into equally parts for each thread. Since we are only allowed to use a small number of threads compared with GPU, each threads will do a couple of tasks.
+
+\section{Results and Performance}
+
+\subsection{Constructing Tree}
+
+For the given test cases, we measure the time cost as follows:
+
+\begin{center}
+\begin{tabular}
+    
+    Sample size & 945 & 81921 & 1923840 & 7283942 \\
+    Tree nodes & \\
+    Tree depth & \\
+    Time cost (around) 1.05 & 80.5 & 2936.0 & 13587.2
+    
+
+\end{tabular}
+\end{center}
+
+\subsection{Pthread Version}
+
+./nbody ? 1 10 0.5 test2.txt 1
+
+\begin{center}
+    \begin{tabular}{cc}
+        \toprule
+        number of threads & time of computing \\
+        \midrule
+        1 & 538.2566 \\ 
+        2 & 292.9993 \\ 
+        4 & 190.3291 \\ 
+        8 & 104.7604 \\ 
+        16 & 68.2259 \\ 
+        32 & 62.0612 \\ 
+        64 & 57.2310 \\ 
+        128 & 53.4959 \\ 
+        256 & 60.6209 \\ 
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\subsection{Threshold}
+
+./nbody 12 1 10 0.001 test4.txt ?
+
+\begin{center}
+    \caption{threshold}
+    \begin{tabular}{cc}
+        \toprule
+        threshold & time of computing \\
+        \midrule
+        0.5 & 14306.3809 \\
+        1 & 3526.8691 \\
+        1.5 & 1046.5911 \\
+        2.0 & 222.5127 \\
+    \bottomrule
+    \end{tabular}
+\end{center}
+
+
+./nbody 12 1 10 0.5 test.txt 1
+
+\begin{center}
+    \caption{pthread}
+    \begin{tabular}{cc}
+        \toprule
+        sample size & pthread time & cuda time & sequential time \\
+        \midrule
+        $10^2$ & 1.0750 & 0.9339 & 0.1046 \\ 
+        $10^3$ & 1.2820 & 1.9371 & 1.7768 \\ 
+        $10^4$ & 10.7835 & 4.2224 & 24.9308 \\ 
+        $10^5$ & 87.6806 & 55.2118 & 250.8340 \\
+        $10^6$ & 1731.9879 & 1165.7869 & 3841.7661 \\
+        $10^7$ & 10264.4414 & 7107.6475 & 49441.0547 \\
+    \bottomrule
+    \end{tabular}
+\end{center}
+
+testcases
+
+case & iter & dt & th & sequential time & pth & cuda
+
+test1.txt & 1000 & 0.5 & 0 & 72.5762 & 10.9493 & 11.8188
+test2.txt & 100 & 0.01 & 1 & 490.3596 & 82.4046 & 34.6829
+test3.txt & 10 & 0.01 & 0 & 22757.1484 & 2237.4797 & 1367.4998
+test4.txt & 10 & 0.001 & 1 & 65673.0859 & 6030.9814 & 3524.6965
+
+\section{Improvements}
+
+% \begin{center}
+    % \includegraphics[width=4cm]{../output/buddham.png}
+    % \fcaption{利用中点作为收缩点，简化比0.01}\label{mid}
+% \end{center}
+
+\end{document}
