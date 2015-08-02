@@ -34,6 +34,9 @@ __host__ __device__ void tree_insert(Body *body, int node, Node *nodes, int *nex
 __host__ __device__ void tree_search(int node, Body *body, double *a_x,
     double *a_y, Node *nodes, double size, double threshold);
 
+__host__ __device__ void tree_search_loop(int node, Body *body, double *a_x,
+        double *a_y, Node *nodes, double size, double threshold);
+
 
 // pthread worker
 void *thread_worker(void *args)

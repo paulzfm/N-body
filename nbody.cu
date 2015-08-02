@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+#define __WAIT_AVAILABLE_GPU(x) cudaSetDevice(1);\
+int __waitGPU;\
+while (cudaMalloc((void**)&__waitGPU, sizeof(int)) == 46)\
+{printf("waiting...\n");sleep(1);}printf("running...\n")
 
 extern int N; // num of samples
 int n; // num of nodes
@@ -85,14 +91,17 @@ int main(int argc, char **argv)
     Body *d_bodies;
     Node *d_tree;
     cudaError_t err;
+
+    __WAIT_AVAILABLE_GPU(1);
+    cudaSetDevice(1);
+    printf("set device: 1\n");
+    cudaDeviceSetLimit(cudaLimitStackSize, 102400);
+    printf("set limit done.\n");
+
     err = cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
     printf("malloc d_bodies: %s\n", cudaGetErrorString(err));
     err = cudaMalloc((void**)&d_tree, sizeof(Node) * n);
     printf("malloc d_tree: %s\n", cudaGetErrorString(err));
-
-    cudaSetDevice(1);
-    cudaDeviceSetLimit(cudaLimitStackSize, 102400);
-    printf("set limit done.\n");
 
     for (int k = 0; k < iter; k++) {
         run_cuda_version(k, bodies, pthread_time + k, tree, d_bodies, d_tree);
