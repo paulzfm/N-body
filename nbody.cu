@@ -97,7 +97,7 @@ int main(int argc, char **argv)
     Body *d_bodies;
     Node *d_tree;
 
-    __WAIT_AVAILABLE_GPU(2);
+    __WAIT_AVAILABLE_GPU(1);
     // cudaDeviceSetLimit(cudaLimitStackSize, 10240);
 
     cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
