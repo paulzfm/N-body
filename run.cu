@@ -29,6 +29,8 @@ __host__ __device__ void tree_update(Body *body, Node *nodes,
 
 __host__ __device__ void tree_print(Node *nodes, int node, int indent);
 
+int tree_depth(int node, Node *nodes);
+
 // help functions
 void tree_insert(Body *body, int node, Node *nodes, int *next);
 
@@ -184,6 +186,28 @@ __host__ __device__ void tree_print(Node *nodes, int node, int indent)
             tree_print(nodes, nodes[node].children[i], indent + 1);
         }
     }
+}
+
+
+int tree_depth(int node, Node *nodes)
+{
+    if (nodes[node].status == Node::EMPTY) {
+        return 0;
+    }
+
+    if (nodes[node].status == Node::EXTERNAL) {
+        return 1;
+    }
+
+    int depth = 0;
+    for (int i = 0; i < 4; i++) {
+        int tmp = tree_depth(nodes[node].children[i], nodes);
+        if (tmp > depth) {
+            depth = tmp;
+        }
+    }
+
+    return depth + 1;
 }
 
 
