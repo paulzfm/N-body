@@ -61,16 +61,16 @@ int main(int argc, char **argv)
     bool pthread = false;
 
     if (argc == 9) {
-        if (argv[9][0] == 'a') {
+        if (argv[8][0] == 'a') {
             cuda = pthread = true;
-        } else if (argv[9][0] == 'p') {
+        } else if (argv[8][0] == 'p') {
             pthread = true;
             cuda = false;
         }
     } else if (argc == 13) {
-        if (argv[13][0] == 'a') {
+        if (argv[12][0] == 'a') {
             cuda = pthread = true;
-        } else if (argv[13][0] == 'p') {
+        } else if (argv[12][0] == 'p') {
             pthread = true;
             cuda = false;
         }
