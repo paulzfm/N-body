@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     } else if (argc == 12) {
         ;
     } else {
-        fprintf(stderr, "Usage: %s num_of_threads m T t θ enable/disable xmin ymin length Length\n", argv[0]);
+        fprintf(stderr, "Usage: %s num_of_threads m T t file θ enable/disable xmin ymin length Length\n", argv[0]);
         exit(1);
     }
 
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
     Body *d_bodies;
     Node *d_tree;
 
-    __WAIT_AVAILABLE_GPU(1);
+    __WAIT_AVAILABLE_GPU(2);
     // cudaDeviceSetLimit(cudaLimitStackSize, 10240);
 
     cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
@@ -114,6 +114,19 @@ int main(int argc, char **argv)
 
     cudaFree(d_bodies);
     cudaFree(d_tree);
+
+// save to file
+FILE *___file = fopen("all_times.txt", "w");
+fprintf(___file, "pthread=[");
+for (int i = 0; i < iter; i++) {
+    fprintf(___file, "%f ", pthread_time[i]);
+}
+fprintf(___file, "]\ncuda=[");
+for (int i = 0; i < iter; i++) {
+    fprintf(___file, "%f ", cuda_time[i]);
+}
+fprintf(___file, "]\n");
+fclose(___file);
 
     // summary
     printf("[summary] computation time (ms)\n");
