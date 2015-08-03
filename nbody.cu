@@ -18,15 +18,15 @@ double dt; // time interval
 
 int main(int argc, char **argv)
 {
-    if (argc == 8) {
+    if (argc == 8 || argc == 9) {
         if (strcmp(argv[7], "enable") == 0) {
             fprintf(stderr, "Option error: expected xwindow size.\n");
             exit(1);
         }
-    } else if (argc == 12) {
+    } else if (argc == 12 || argc == 13) {
         ;
     } else {
-        fprintf(stderr, "Usage: %s num_of_threads m T t file θ enable/disable xmin ymin length Length\n", argv[0]);
+        fprintf(stderr, "Usage: %s num_of_threads m T t file θ enable/disable xmin ymin length Length [c|p|a]\n", argv[0]);
         exit(1);
     }
 
@@ -56,6 +56,26 @@ int main(int argc, char **argv)
         printf("[loader] xwindow: disable\n");
     }
 
+    // default
+    bool cuda = true;
+    bool pthread = false;
+
+    if (argc == 9) {
+        if (argv[9][0] == 'a') {
+            cuda = pthread = true;
+        } else if (argv[9][0] == 'p') {
+            pthread = true;
+            cuda = false;
+        }
+    } else if (argc == 13) {
+        if (argv[13][0] == 'a') {
+            cuda = pthread = true;
+        } else if (argv[13][0] == 'p') {
+            pthread = true;
+            cuda = false;
+        }
+    }
+
     // load sample
     Body *samples = load_input(file, m);
 
@@ -67,98 +87,89 @@ int main(int argc, char **argv)
     float *pthread_time = (float*)malloc(sizeof(float) * iter);
     float *cuda_time = (float*)malloc(sizeof(float) * iter);
 
-    // 1 run pthread version
-    printf("[pthread] launch\n");
     Body *bodies = (Body*)malloc(sizeof(Body) * N); // working array
-    memcpy(bodies, samples, sizeof(Body) * N);
 
-    // allocate memory for threads
-    pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * num_threads);
-    TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * num_threads);
+    if (pthread) {
+        // 1 run pthread version
+        printf("[pthread] launch\n");
+        memcpy(bodies, samples, sizeof(Body) * N);
 
-    // run
-    for (int k = 0; k < iter; k++) {
-        run_pthread_version(k, num_threads, bodies, pthread_time + k, tree,
-            threads, param);
-        printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
-        if (opt_xwindow) {
-            xwindow_show(bodies, true);
+        // allocate memory for threads
+        pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * num_threads);
+        TaskParam *param = (TaskParam*)malloc(sizeof(TaskParam) * num_threads);
+
+        // run
+        for (int k = 0; k < iter; k++) {
+            run_pthread_version(k, num_threads, bodies, pthread_time + k, tree,
+                threads, param);
+            printf("[pthread] iter: %d, time elapsed: %.4f ms\n", k, pthread_time[k]);
+            if (opt_xwindow) {
+                xwindow_show(bodies, true);
+            }
         }
+
+        free(threads);
+        free(param);
+
+        // summary
+        printf("[summary] computation time (ms)\n");
+
+        float min = 1e8;
+        float max = -1e8;
+        float total = 0.0;
+        for (int i = 0; i < iter; i++) {
+            if (pthread_time[i] < min) {
+                min = pthread_time[i];
+            } else if (pthread_time[i] > max) {
+                max = pthread_time[i];
+            }
+            total += pthread_time[i];
+        }
+        printf("pthread: min %.4f, max %.4f, average %.4f, total %.4f\n",
+            min, max, total / iter, total);
     }
 
-    free(threads);
-    free(param);
+    if (cuda) {
+        // 2 run cuda version
+        printf("[cuda] launch\n");
+        memcpy(bodies, samples, sizeof(Body) * N);
 
-    // 2 run cuda version
-    printf("[cuda] launch\n");
-    memcpy(bodies, samples, sizeof(Body) * N);
+        // allocate gpu memory
+        Body *d_bodies;
+        Node *d_tree;
 
-    // allocate gpu memory
-    Body *d_bodies;
-    Node *d_tree;
+        __WAIT_AVAILABLE_GPU(1);
+        // cudaDeviceSetLimit(cudaLimitStackSize, 10240);
 
-    __WAIT_AVAILABLE_GPU(1);
-    // cudaDeviceSetLimit(cudaLimitStackSize, 10240);
+        cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
+        cudaMalloc((void**)&d_tree, sizeof(Node) * n);
 
-    cudaMalloc((void**)&d_bodies, sizeof(Body) * N);
-    cudaMalloc((void**)&d_tree, sizeof(Node) * n);
-
-    // run
-    for (int k = 0; k < iter; k++) {
-        run_cuda_version(k, bodies, cuda_time + k, tree, d_bodies, d_tree);
-        printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
-        if (opt_xwindow) {
-            xwindow_show(bodies, true);
+        // run
+        for (int k = 0; k < iter; k++) {
+            run_cuda_version(k, bodies, cuda_time + k, tree, d_bodies, d_tree);
+            printf("[cuda] iter: %d, time elapsed: %.4f ms\n", k, cuda_time[k]);
+            if (opt_xwindow) {
+                xwindow_show(bodies, true);
+            }
         }
-    }
 
-    cudaFree(d_bodies);
-    cudaFree(d_tree);
+        cudaFree(d_bodies);
+        cudaFree(d_tree);
 
-// save to file
-FILE *___file = fopen("all_times.txt", "w");
-fprintf(___file, "pthread=[");
-for (int i = 0; i < iter; i++) {
-    fprintf(___file, "%f ", pthread_time[i]);
-}
-fprintf(___file, "]\ncuda=[");
-for (int i = 0; i < iter; i++) {
-    fprintf(___file, "%f ", cuda_time[i]);
-}
-fprintf(___file, "]\n");
-fclose(___file);
-
-    // summary
-    printf("[summary] computation time (ms)\n");
-
-    float min = 1e8;
-    float max = -1e8;
-    float total = 0.0;
-    for (int i = 0; i < iter; i++) {
-        if (pthread_time[i] < min) {
-            min = pthread_time[i];
-        } else if (pthread_time[i] > max) {
-            max = pthread_time[i];
+        float min = 1e8;
+        float max = -1e8;
+        float total = 0.0;
+        for (int i = 0; i < iter; i++) {
+            if (cuda_time[i] < min) {
+                min = cuda_time[i];
+            } else if (cuda_time[i] > max) {
+                max = cuda_time[i];
+            }
+            total += cuda_time[i];
         }
-        total += pthread_time[i];
+        printf("cuda   : min %.4f, max %.4f, average %.4f, total %.4f\n",
+            min, max, total / iter, total);
     }
-    printf("pthread: min %.4f, max %.4f, average %.4f, total %.4f\n",
-        min, max, total / iter, total);
-
-    min = 1e8;
-    max = -1e8;
-    total = 0.0;
-    for (int i = 0; i < iter; i++) {
-        if (cuda_time[i] < min) {
-            min = cuda_time[i];
-        } else if (cuda_time[i] > max) {
-            max = cuda_time[i];
-        }
-        total += cuda_time[i];
-    }
-    printf("cuda   : min %.4f, max %.4f, average %.4f, total %.4f\n",
-        min, max, total / iter, total);
-
 
     free(pthread_time);
     free(cuda_time);
@@ -166,6 +177,5 @@ fclose(___file);
     free(samples);
 
     printf("[loader] all done\n");
-
     return 0;
 }
